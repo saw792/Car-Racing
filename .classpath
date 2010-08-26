@@ -4,22 +4,22 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="GlueGen" sourcepath="/GlueGenSrc">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/sean/jogamp/gluegen/build/gluegen-rt-natives-linux-i586"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files/eclipse/JOGL/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="JOGL" sourcepath="/JOGLSrc">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/sean/jogamp/jogl/build/jogl/jogl-natives-linux-i586"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files/eclipse/JOGL/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="NativeWindow" sourcepath="/NativeWIndowSrc">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/sean/jogamp/jogl/build/nativewindow/nativewindow-natives-linux-i586"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files/eclipse/JOGL/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="Newt" sourcepath="/NewtSrc">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/sean/jogamp/jogl/build/newt/newt-natives-linux-i586"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files/eclipse/JOGL/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="ECLIPSE_HOME"/>

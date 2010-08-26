@@ -1,9 +1,8 @@
 
 public class CarRacing {
 
-	public static void main(String[] args) {
-	  Input parser = new Input(new GLGraphics(false));
-	  
+	public static void main(String[] args) throws InterruptedException {
+	  Input parser = new Input(new GLGraphics(true));
 	}
 
 }
