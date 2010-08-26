@@ -64,8 +64,6 @@ public class GLGraphics implements GLEventListener{
   }
   
   public void printText(String text) {
-	  float centrex = (float) renderer.getBounds(text).getCenterX();
-	  float centrey = (float) renderer.getBounds(text).getCenterY();
 	  renderer.begin3DRendering();
 	  renderer.draw3D(text,(float) -Math.sin(Math.toRadians(camera_rotate)), 1.0f,(float) -Math.cos(Math.toRadians(camera_rotate)), 0.01f);
 	  renderer.end3DRendering();
@@ -73,17 +71,17 @@ public class GLGraphics implements GLEventListener{
   
   private void loadTextures(GL2 gl) {
 	  try {
-	  textures[0] = TextureIO.newTexture(new File("/home/sean/comp1510/Car Racing/Sunset.jpg"), false);
+	  textures[0] = TextureIO.newTexture(new File("Sunset.jpg"), false);
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
   }
   
   private void loadModels(GL2 gl) {
-	  cube = new Model("/home/sean/comp1510/Car Racing/cube.obj");
-	  cube.genBuffers(gl);
-	  cart = new Model("/home/sean/comp1510/Car Racing/cart-tri.obj");
-	  cart.genBuffers(gl);
+	  cube = new Model("cube.obj");
+	  cube.buildList(gl);
+	  cart = new Model("cart-tri.obj");
+	  cart.buildList(gl);
   }
   
   private void loadDisplayLists(GL2 gl) {

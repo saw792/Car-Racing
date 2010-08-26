@@ -16,9 +16,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 import javax.media.opengl.GL2;
 
 public class Model {
@@ -34,23 +31,6 @@ public class Model {
 	 */
 	private static final float[] DEFAULT_TC_VALUES = {0.0f, 1.0f};
 	private static final float[] DEFAULT_NORM_VALUES = {0.0f, 0.0f, 0.0f};
-	
-	// Number of bytes per float value
-	private static final int FLOAT_SIZE = 4;
-	
-	// Number of bits per byte
-	private static final int BYTE_SIZE = 8;
-	
-	/* Number of floats in each set of vertex data
-	 * Includes vertices, texture coordinate and
-	 * normal values
-	 */
-	private static final int VERTEX_DATA_SIZE = 8;
-	
-	/* Array to be used as a pointer to VBO data
-	 * in graphics memory
-	 */
-	private int[] VERTEX_VBO = new int[1];
 	
 	// Vertex data
 	private float[] vertices;
@@ -72,11 +52,7 @@ public class Model {
 	private int normal_count = 0;
 	private int index_count = 0;
 	
-	/* Buffer to store the vertex data to be passed
-	 * into graphics memory
-	 */
-	private FloatBuffer vertex_buffer_data;
-	private int vertex_buffer_length;
+	private int displayList;
 	
 	public Model (String filepath) {
 		BufferedReader reader;
@@ -171,98 +147,50 @@ public class Model {
 		} catch (IOException e) {
 			System.err.println(e);
 		}
+		
 	}
 	
-	public void genBuffers(GL2 gl) {
-		int v = 0;
-		int t = 0;
-		int n = 0;
-		ByteBuffer b;
+	public void buildList(GL2 gl) {
+		displayList = gl.glGenLists(1);
 		
-		/* Initialise the buffer to store data
-		 * Must be allocated as a direct ByteBuffer
-		 * first so the bytes are arranged correctly
-		 * for the video card to read
-		 */
-		vertex_buffer_length = vert_indices.length * VERTEX_DATA_SIZE;
-		b = ByteBuffer.allocateDirect(vertex_buffer_length * BYTE_SIZE);
-		b.order(ByteOrder.nativeOrder());
-		vertex_buffer_data = b.asFloatBuffer();
+		gl.glNewList(displayList, GL2.GL_COMPILE);
 		
-		// Order and store vertex data from indices
-		for (int i = 0; i < vertex_buffer_length; i +=8) {
-			int vi = vert_indices[v];
-			int tc = tc_indices[t];
-			int nm = normal_indices[n];
-			
-			vertex_buffer_data.put(vertices[(vi - 1) * 3]);
-			vertex_buffer_data.put(vertices[(vi - 1) * 3 + 1]);
-			vertex_buffer_data.put(vertices[(vi - 1) * 3 + 2]);
-			v++;
-			
-			switch (tc) {
-			// If there is no texture coordinate data, add some
-			case DEFAULT_TC_INDEX:
-				vertex_buffer_data.put(DEFAULT_TC_VALUES[0]);
-				vertex_buffer_data.put(DEFAULT_TC_VALUES[1]);
-				break;
-			default:
-				vertex_buffer_data.put(texture_coords[(tc - 1) * 2]);
-				vertex_buffer_data.put(texture_coords[(tc - 1) * 2 + 1]);
-			}
-			t++;
-			
-			switch (nm) {
-			// If there is no normal data, add some
-			case DEFAULT_NORM_INDEX:
-				vertex_buffer_data.put(DEFAULT_NORM_VALUES[0]);
-				vertex_buffer_data.put(DEFAULT_NORM_VALUES[1]);
-				vertex_buffer_data.put(DEFAULT_NORM_VALUES[2]);
-				break;
-			default:
-				vertex_buffer_data.put(normals[(nm - 1) * 3]);
-				vertex_buffer_data.put(normals[(nm - 1) * 3 + 1]);
-				vertex_buffer_data.put(normals[(nm - 1) * 3 + 2]);
-			}
-			n++;
-		}
-		
-		// Reset to the start of the buffer for reading
-		vertex_buffer_data.flip();
-		
-		// Generate array data vertex buffer object
-		gl.glGenBuffers(1, VERTEX_VBO, 0);
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, VERTEX_VBO[0]);
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertex_buffer_length * FLOAT_SIZE, vertex_buffer_data, GL2.GL_STATIC_DRAW);
-		
+		  gl.glBegin(GL2.GL_TRIANGLES);
+		  
+		  for (int i = 0; i < index_count * 3; i++) {
+			  int tc_index = tc_indices[i];
+			  int n_index = normal_indices[i];
+			  int v_index = vert_indices[i];
+			  
+			  switch (tc_index) {
+			  case DEFAULT_TC_INDEX:
+				  gl.glTexCoord2f(DEFAULT_TC_VALUES[0], DEFAULT_TC_VALUES[1]);
+				  break;
+			  default:
+				  gl.glTexCoord2f(texture_coords[(tc_index - 1) * 2], texture_coords[(tc_index - 1) * 2 + 1]);
+			  }
+			  
+			  switch (n_index) {
+			  case DEFAULT_NORM_INDEX:
+				  gl.glNormal3f(DEFAULT_NORM_VALUES[0], DEFAULT_NORM_VALUES[1], DEFAULT_NORM_VALUES[2]);
+				  break;
+			  default:
+				  gl.glNormal3f(normals[(n_index - 1) * 3], normals[(n_index - 1) * 3 + 1], normals[(n_index - 1) * 3 + 2]);
+			  }
+			  gl.glVertex3f(vertices[(v_index - 1) * 3], vertices[(v_index - 1) * 3 + 1], vertices[(v_index - 1) * 3 + 2]);
+		  }
+		  
+		  gl.glEnd();
+		  
+		gl.glEndList();
 	}
 	
 	public void draw(GL2 gl) {
-		// Select this model's data to be drawn
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, VERTEX_VBO[0]);
-		
-		/* Enable and set pointers to the vertex data
-		 * (vertices, tex coords, normals)
-		 */
-		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-		gl.glVertexPointer(3, GL2.GL_FLOAT, 8 * FLOAT_SIZE, 0);
-		
-		gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-		gl.glTexCoordPointer(2, GL2.GL_FLOAT, 8 * FLOAT_SIZE, 3 * FLOAT_SIZE);
-		
-		gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-		gl.glNormalPointer(GL2.GL_FLOAT, 8 * FLOAT_SIZE, 5 * FLOAT_SIZE);
-		
-		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, vertex_buffer_length);
-		
-		// Disable our pointers after use
-		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-		gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-		gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+		gl.glCallList(displayList);
 	}
 	
-	public void destroyBuffers(GL2 gl) {
-	  gl.glDeleteBuffers(1, VERTEX_VBO, 0);	
+	public void deleteLists(GL2 gl) {
+	  gl.glDeleteLists(displayList, 1);	
 	}
 	
 	//Test/debug methods

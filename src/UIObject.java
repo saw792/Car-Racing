@@ -18,7 +18,7 @@ public class UIObject {
     private static Graphics graphics;
     private Canvas canvas;
          
-    public UIObject(/*LGraphics gl,*/ float width, float height, float xpos, float ypos) {
+    protected UIObject(/*LGraphics gl,*/ float width, float height, float xpos, float ypos) {
         JFrame frame = new JFrame();
         canvas = new Canvas();
         frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
