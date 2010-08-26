@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /*
  *  Model
  *  
@@ -342,6 +343,8 @@ public class Model {
 	} */
 }
 =======
+=======
+>>>>>>> df3fdc0a6f70a15688bdd1c65f24928cc4da6491
 /*
  *  Model
  *  
@@ -639,4 +642,7 @@ public class Model {
 		System.out.println("Indexed Vertex Count:" + vert_indices.length);
 	} */
 }
+<<<<<<< HEAD
+>>>>>>> df3fdc0a6f70a15688bdd1c65f24928cc4da6491
+=======
 >>>>>>> df3fdc0a6f70a15688bdd1c65f24928cc4da6491

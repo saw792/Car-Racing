@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.File;
@@ -192,6 +193,8 @@ public class GLGraphics implements GLEventListener{
   }
 }
 =======
+=======
+>>>>>>> df3fdc0a6f70a15688bdd1c65f24928cc4da6491
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.File;
@@ -379,4 +382,7 @@ public class GLGraphics implements GLEventListener{
 	gl.glViewport(0, 0, width, height);
   }
 }
+<<<<<<< HEAD
+>>>>>>> df3fdc0a6f70a15688bdd1c65f24928cc4da6491
+=======
 >>>>>>> df3fdc0a6f70a15688bdd1c65f24928cc4da6491
