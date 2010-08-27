@@ -71,7 +71,7 @@ public class GLGraphics implements GLEventListener{
   
   private void loadTextures(GL2 gl) {
 	  try {
-	  textures[0] = TextureIO.newTexture(new File("Sunset.jpg"), false);
+	  textures[0] = TextureIO.newTexture(new File("metal.jpg"), false);
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
