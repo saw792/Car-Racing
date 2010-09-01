@@ -75,7 +75,7 @@ public class GLGraphics implements GLEventListener{
   
   private void loadTextures(GL2 gl) {
 	  try {
-	  textures[0] = TextureIO.newTexture(new File("metal.JPG"), false);
+	  textures[0] = TextureIO.newTexture(new File("Sunset.jpg"), false);
 	  skytex[0] = TextureIO.newTexture(new File("sky/skyfront.jpg"), false);
 	  skytex[1] = TextureIO.newTexture(new File("sky/skyleft.jpg"), false);
 	  skytex[2] = TextureIO.newTexture(new File("sky/skyback.jpg"), false);
@@ -213,7 +213,7 @@ public class GLGraphics implements GLEventListener{
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
-	//cart.draw(gl);
+	cart.draw(gl);
 	//cube.draw(gl);
 	
 	gl.glDisable(GL2.GL_TEXTURE_2D);
@@ -233,8 +233,8 @@ public class GLGraphics implements GLEventListener{
     
 	loadDisplayLists(gl);
 	loadTextures(gl);
-	loadSky(gl);
-	//loadModels(gl);
+	//loadSky(gl);
+	loadModels(gl);
 	
 	renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);
 	
