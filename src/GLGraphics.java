@@ -25,6 +25,10 @@ public class GLGraphics implements GLEventListener{
   ArrayList<Track> tracks;
   Model cube;
   Model cart;
+  
+  Texture[] skytex = new Texture[5];
+  int sky;
+  
   int listsToDraw;
   
   float camera_zoom = 10;
@@ -71,7 +75,12 @@ public class GLGraphics implements GLEventListener{
   
   private void loadTextures(GL2 gl) {
 	  try {
-	  textures[0] = TextureIO.newTexture(new File("Sunset.jpg"), false);
+	  textures[0] = TextureIO.newTexture(new File("metal.JPG"), false);
+	  skytex[0] = TextureIO.newTexture(new File("sky/skyfront.jpg"), false);
+	  skytex[1] = TextureIO.newTexture(new File("sky/skyleft.jpg"), false);
+	  skytex[2] = TextureIO.newTexture(new File("sky/skyback.jpg"), false);
+	  skytex[3] = TextureIO.newTexture(new File("sky/skyright.jpg"), false);
+	  skytex[4] = TextureIO.newTexture(new File("sky/skytop.jpg"), false);
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
@@ -82,6 +91,53 @@ public class GLGraphics implements GLEventListener{
 	  cube.buildList(gl);
 	  cart = new Model("cart-tri.obj");
 	  cart.buildList(gl);
+  }
+  
+  private void loadSky(GL2 gl) {
+	  sky = gl.glGenLists(1);
+	  
+	  gl.glNewList(sky, GL2.GL_COMPILE);
+	  
+	    gl.glBegin(GL2.GL_QUADS);
+	    
+	    //Front
+	    skytex[0].bind();
+	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f, -1.0f, 1.0f);
+	    
+	    //Left
+	    skytex[1].bind();
+	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+	    
+	    //Back
+	    skytex[2].bind();
+	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f, -1.0f, -1.0f);
+	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
+	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+	    
+	    //Right
+	    skytex[3].bind();
+	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f, -1.0f, 1.0f);
+	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
+	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f, -1.0f, -1.0f);
+	    
+	    //Top
+	    skytex[4].bind();
+	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
+	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	    
+	    gl.glEnd();
+	    
+	  gl.glEndList();
   }
   
   private void loadDisplayLists(GL2 gl) {
@@ -103,6 +159,25 @@ public class GLGraphics implements GLEventListener{
   
   public void loadTrack(GL2 gl) {
 	  
+  }
+  
+  public void drawSky(GL2 gl) {
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+		glu.gluLookAt(0, 0, 0, 0, 0, 0, 0, 1, 0);
+		
+		gl.glPushAttrib(GL2.GL_ENABLE_BIT);
+		gl.glEnable(GL2.GL_TEXTURE_2D);
+		gl.glDisable(GL2.GL_DEPTH_TEST);
+		gl.glDisable(GL2.GL_LIGHTING);
+		gl.glDisable(GL2.GL_BLEND);
+		
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		
+		gl.glCallList(sky);
+		
+		gl.glPopAttrib();
+		gl.glPopMatrix();
   }
   
   public void showMiniMap(GL2 gl) {
@@ -134,10 +209,11 @@ public class GLGraphics implements GLEventListener{
 	gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 	setCamera(drawable, gl, glu, camera_zoom);
 	
+	//drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
-	cart.draw(gl);
+	//cart.draw(gl);
 	//cube.draw(gl);
 	
 	gl.glDisable(GL2.GL_TEXTURE_2D);
@@ -157,7 +233,8 @@ public class GLGraphics implements GLEventListener{
     
 	loadDisplayLists(gl);
 	loadTextures(gl);
-	loadModels(gl);
+	loadSky(gl);
+	//loadModels(gl);
 	
 	renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);
 	
