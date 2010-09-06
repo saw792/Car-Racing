@@ -1,10 +1,5 @@
-import java.awt.Canvas;
-import java.awt.Graphics;
-import java.awt.Toolkit;
-import java.awt.geom.RoundRectangle2D;
- 
-import javax.swing.JFrame;
- 
+import java.awt.Graphics2D;
+import com.jogamp.opengl.util.awt.TextureRenderer;
  
 public class UIObject {
     //THREAD: GRAPHICS/UI
@@ -13,37 +8,28 @@ public class UIObject {
     //Holds a certain xy position on the screen (opengl coords not track coords)
     //Has a certain width and height
          
-    private float x, y;
-    private float w, h; 
-    private static Graphics graphics;
-    private Canvas canvas;
-         
-    protected UIObject(/*LGraphics gl,*/ float width, float height, float xpos, float ypos) {
-        JFrame frame = new JFrame();
-        canvas = new Canvas();
-        frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-        frame.add(canvas);
-        frame.setVisible(true);
-        graphics = frame.getGraphics();//gl.getGraphics2D();
-        w = width;
-        h = height;
-        x = xpos;
-        y = ypos;
-        //RoundRectangle2D ugly = new RoundRectangle2D.Float(5, 5, x, y, w, h);
-        canvas.paint(graphics);
-        graphics.drawRoundRect((int)x,(int) y,(int) width, (int)height, 5, 5);
+    private static TextureRenderer tr;
+    protected Graphics2D graphics;
+    
+    protected static int maxwidth;
+    protected static int maxheight;
+    
+    public UIObject() {
+    	graphics = tr.createGraphics();
     }
-         
-    public void addRectangle() {
-         
-        RoundRectangle2D ugly = new RoundRectangle2D.Float(5, 5, x, y, w, h);
+    
+    //Designed to be overwritten
+    public void update() {}
+    
+    public static void updateAll(int screenWidth, int screenHeight) {
+    	tr.beginOrthoRendering(screenWidth, screenHeight);
+    	tr.drawOrthoRect(0, 0);
+    	tr.endOrthoRendering();
     }
-         
-    public void addCircle() {
-             
-    }
-         
-    public void update() {
-        canvas.update(graphics);
+    
+    public static void initUIObjects(int screenWidth, int screenHeight) {
+    	maxwidth = screenWidth;
+    	maxheight = screenHeight;
+    	tr = new TextureRenderer(screenWidth, screenHeight, true);
     }
 }

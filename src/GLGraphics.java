@@ -1,4 +1,6 @@
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
@@ -26,8 +28,14 @@ public class GLGraphics implements GLEventListener{
   Model cube;
   Model cart;
   
+  int framewidth = 0;
+  int frameheight = 0;
+  
   Texture[] skytex = new Texture[5];
+  Texture[] hi_res_sky = new Texture[1];
   int sky;
+  
+  ArrayList<UIObject> overlays = new ArrayList<UIObject>();
   
   int listsToDraw;
   
@@ -35,6 +43,7 @@ public class GLGraphics implements GLEventListener{
   float camera_rotate = 0;
   
   public GLGraphics(boolean windowed) {
+	  Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 	  frame = new JFrame("Car Racing");
 	  //Specify initial canvas options
 	  capabilities = new GLCapabilities(GLProfile.getDefault());
@@ -50,7 +59,11 @@ public class GLGraphics implements GLEventListener{
 	  
 	  frame.add(canvas);
 	  frame.setUndecorated(!windowed);
-	  frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+	  frame.setSize(d);
+	  
+	  framewidth = d.width;
+	  frameheight = d.height;
+	  
 	  frame.setVisible(true);
 	  canvas.requestFocus();
   }
@@ -81,6 +94,7 @@ public class GLGraphics implements GLEventListener{
 	  skytex[2] = TextureIO.newTexture(new File("sky/skyback.jpg"), false);
 	  skytex[3] = TextureIO.newTexture(new File("sky/skyright.jpg"), false);
 	  skytex[4] = TextureIO.newTexture(new File("sky/skytop.jpg"), false);
+	  hi_res_sky[0] = TextureIO.newTexture(new File("sky/hirestest1.jpg"), false);
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
@@ -97,46 +111,71 @@ public class GLGraphics implements GLEventListener{
 	  sky = gl.glGenLists(1);
 	  
 	  gl.glNewList(sky, GL2.GL_COMPILE);
+	  gl.glEnable(GL2.GL_TEXTURE_2D);
+	  gl.glColor3f(1.0f, 1.0f, 1.0f);
 	  
-	    gl.glBegin(GL2.GL_QUADS);
-	    
 	    //Front
 	    skytex[0].bind();
-	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
-	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f, -1.0f, 1.0f);
+	    gl.glBegin(GL2.GL_QUADS);
 	    
-	    //Left
-	    skytex[1].bind();
-	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-	    
-	    //Back
-	    skytex[2].bind();
-	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f, -1.0f, -1.0f);
-	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
-	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-	    
-	    //Right
-	    skytex[3].bind();
-	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f, -1.0f, 1.0f);
-	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
-	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
-	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f, -1.0f, -1.0f);
-	    
-	    //Top
-	    skytex[4].bind();
-	    gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-	    gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-	    gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
-	    gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	      gl.glNormal3f(0.0f, 0.0f, -1.0f);
+	      gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+	      gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	      gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	      gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f, -1.0f, 1.0f);
 	    
 	    gl.glEnd();
 	    
+	    //Left
+	    skytex[1].bind();
+	    gl.glBegin(GL2.GL_QUADS);
+	    
+	      gl.glNormal3f(1.0f, 0.0f, 0.0f);
+	      gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+	      gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	      gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	      gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+	    
+	    gl.glEnd();
+	    
+	    //Back
+	    //skytex[2].bind();
+	    hi_res_sky[0].bind();
+	    gl.glBegin(GL2.GL_QUADS);
+	    
+	      gl.glNormal3f(0.0f, 0.0f, 1.0f);
+	      gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f, -1.0f, -1.0f);
+	      gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
+	      gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	      gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+	    
+	    gl.glEnd();
+	    
+	    //Right
+	    skytex[3].bind();
+	    gl.glBegin(GL2.GL_QUADS);
+	    
+	      gl.glNormal3f(-1.0f, 0.0f, 0.0f);
+	      gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f, -1.0f, 1.0f);
+	      gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	      gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
+	      gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f, -1.0f, -1.0f);
+	    
+	    gl.glEnd();
+	    
+	    //Top
+	    skytex[4].bind();
+	    gl.glBegin(GL2.GL_QUADS);
+	    
+	      gl.glNormal3f(0.0f, -1.0f, 0.0f);
+	      gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	      gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	      gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f, 1.0f, -1.0f);
+	      gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	    
+	    gl.glEnd();
+	    
+	  gl.glDisable(GL2.GL_TEXTURE_2D);  
 	  gl.glEndList();
   }
   
@@ -164,11 +203,10 @@ public class GLGraphics implements GLEventListener{
   public void drawSky(GL2 gl) {
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
-		glu.gluLookAt(0, 0, 0, 0, 0, 0, 0, 1, 0);
 		
 		gl.glPushAttrib(GL2.GL_ENABLE_BIT);
 		gl.glEnable(GL2.GL_TEXTURE_2D);
-		gl.glDisable(GL2.GL_DEPTH_TEST);
+	    gl.glDisable(GL2.GL_DEPTH_TEST);
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glDisable(GL2.GL_BLEND);
 		
@@ -178,19 +216,6 @@ public class GLGraphics implements GLEventListener{
 		
 		gl.glPopAttrib();
 		gl.glPopMatrix();
-  }
-  
-  public void showMiniMap(GL2 gl) {
-	  
-  }
-  
-  //Takes 2D coordinates
-  public void addMenuButton(float x, float y) {
-	  
-  }
-  
-  public void showMenu() {
-	  
   }
   
   private void setCamera(GLAutoDrawable drawable, GL2 gl, GLU glu, float distance) {
@@ -207,9 +232,10 @@ public class GLGraphics implements GLEventListener{
   public void display(GLAutoDrawable drawable) {
 	GL2 gl = drawable.getGL().getGL2();
 	gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+	gl.glLoadIdentity();
 	setCamera(drawable, gl, glu, camera_zoom);
 	
-	//drawSky(gl);
+	drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
@@ -220,6 +246,11 @@ public class GLGraphics implements GLEventListener{
 	
 	gl.glColor3f(1.0f, 0.0f, 0.0f);
 	printText("Zomg text!");
+	
+	for (UIObject ui : overlays) {
+		ui.update();
+	}
+	UIObject.updateAll(framewidth, frameheight);
   }
 
   public void dispose(GLAutoDrawable drawable) {
@@ -233,7 +264,7 @@ public class GLGraphics implements GLEventListener{
     
 	loadDisplayLists(gl);
 	loadTextures(gl);
-	//loadSky(gl);
+	loadSky(gl);
 	loadModels(gl);
 	
 	renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);
@@ -255,6 +286,9 @@ public class GLGraphics implements GLEventListener{
 	gl.glLoadIdentity();
 	
 	animator.start();
+	
+	UIObject.initUIObjects(framewidth, frameheight);
+	overlays.add(new LapTimer());
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
