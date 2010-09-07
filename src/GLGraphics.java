@@ -139,8 +139,8 @@ public class GLGraphics implements GLEventListener{
 	    gl.glEnd();
 	    
 	    //Back
-	    //skytex[2].bind();
-	    hi_res_sky[0].bind();
+	    skytex[2].bind();
+	    //hi_res_sky[0].bind();
 	    gl.glBegin(GL2.GL_QUADS);
 	    
 	      gl.glNormal3f(0.0f, 0.0f, 1.0f);
@@ -235,7 +235,7 @@ public class GLGraphics implements GLEventListener{
 	gl.glLoadIdentity();
 	setCamera(drawable, gl, glu, camera_zoom);
 	
-	drawSky(gl);
+	//drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
