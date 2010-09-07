@@ -9,13 +9,13 @@ public class UIObject {
     //Has a certain width and height
          
     private static TextureRenderer tr;
-    protected Graphics2D graphics;
+    protected static Graphics2D graphics;
     
     protected static int maxwidth;
     protected static int maxheight;
     
     public UIObject() {
-    	graphics = tr.createGraphics();
+    	//graphics = tr.createGraphics();
     }
     
     //Designed to be overwritten
@@ -25,11 +25,15 @@ public class UIObject {
     	tr.beginOrthoRendering(screenWidth, screenHeight);
     	tr.drawOrthoRect(0, 0);
     	tr.endOrthoRendering();
+    	tr.dispose();
+    	tr = new TextureRenderer(screenWidth, screenHeight, true);
+    	graphics = tr.createGraphics();
     }
     
     public static void initUIObjects(int screenWidth, int screenHeight) {
     	maxwidth = screenWidth;
     	maxheight = screenHeight;
     	tr = new TextureRenderer(screenWidth, screenHeight, true);
+    	graphics = tr.createGraphics();
     }
 }

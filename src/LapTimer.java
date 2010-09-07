@@ -13,8 +13,6 @@
  * 
  */
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.Calendar;
 
 public class LapTimer extends UIObject {
