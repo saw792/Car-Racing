@@ -24,12 +24,13 @@ public class GLGraphics implements GLEventListener{
   boolean fullscreen = false;
   Texture[] textures = new Texture[1];
   TextureCoords tc;
-  ArrayList<Track> tracks;
   Model cube;
   Model cart;
   
   int framewidth = 0;
   int frameheight = 0;
+  
+  Texture[] tracktiles = new Texture[10];
   
   Texture[] skytex = new Texture[5];
   Texture[] hi_res_sky = new Texture[1];
@@ -95,6 +96,8 @@ public class GLGraphics implements GLEventListener{
 	  skytex[3] = TextureIO.newTexture(new File("sky/skyright.jpg"), false);
 	  skytex[4] = TextureIO.newTexture(new File("sky/skytop.jpg"), false);
 	  hi_res_sky[0] = TextureIO.newTexture(new File("sky/hirestest1.jpg"), false);
+	  
+	  tracktiles[0] = TextureIO.newTexture(new File("Asphalt.tga"), false);
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
@@ -222,7 +225,7 @@ public class GLGraphics implements GLEventListener{
 	  gl.glMatrixMode(GL2.GL_PROJECTION);
 	  gl.glLoadIdentity();
 	  
-	  glu.gluPerspective(45, (float)drawable.getWidth() / (float)drawable.getHeight(), 1, 1000);
+	  glu.gluPerspective(30, (float)drawable.getWidth() / (float)drawable.getHeight(), 1, 1000);
 	  
 	  gl.glMatrixMode(GL2.GL_MODELVIEW);
 	  gl.glLoadIdentity();
@@ -235,12 +238,30 @@ public class GLGraphics implements GLEventListener{
 	gl.glLoadIdentity();
 	setCamera(drawable, gl, glu, camera_zoom);
 	
-	//drawSky(gl);
+	drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
 	cart.draw(gl);
 	//cube.draw(gl);
+	
+	tracktiles[0].bind();
+	tc = tracktiles[0].getImageTexCoords();
+	
+	for (float x = 5; x > -5; x-=1) {
+		
+		for (float z = 5; z > -5; z-=1) {
+			
+			gl.glBegin(GL2.GL_QUADS);
+			
+			  gl.glTexCoord2f(tc.bottom(), tc.right()); gl.glVertex3f(x, 0.0f, z);
+			  gl.glTexCoord2f(tc.bottom(), tc.left()); gl.glVertex3f(x-1, 0.0f, z);
+			  gl.glTexCoord2f(tc.top(), tc.left()); gl.glVertex3f(x-1, 0.0f, z-1);
+			  gl.glTexCoord2f(tc.top(), tc.right()); gl.glVertex3f(x, 0.0f, z-1);
+			
+			gl.glEnd();
+		}
+	}
 	
 	gl.glDisable(GL2.GL_TEXTURE_2D);
 	

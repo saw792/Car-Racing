@@ -25,8 +25,9 @@ public class UIObject {
     	tr.beginOrthoRendering(screenWidth, screenHeight);
     	tr.drawOrthoRect(0, 0);
     	tr.endOrthoRendering();
+    	graphics.dispose();
     	tr.dispose();
-    	tr = new TextureRenderer(screenWidth, screenHeight, true);
+        tr = new TextureRenderer(screenWidth, screenHeight, true);
     	graphics = tr.createGraphics();
     }
     
