@@ -24,8 +24,7 @@ public class GLGraphics implements GLEventListener{
   boolean fullscreen = false;
   Texture[] textures = new Texture[1];
   TextureCoords tc;
-  Model cube;
-  Model cart;
+  Car testcar = new Car(1, 0.0f, 0.0f, 0.0f);;
   
   int framewidth = 0;
   int frameheight = 0;
@@ -104,10 +103,7 @@ public class GLGraphics implements GLEventListener{
   }
   
   private void loadModels(GL2 gl) {
-	  cube = new Model("cube.obj");
-	  cube.buildList(gl);
-	  cart = new Model("cart-tri.obj");
-	  cart.buildList(gl);
+	  Car.modelInit(gl);
   }
   
   private void loadSky(GL2 gl) {
@@ -238,12 +234,11 @@ public class GLGraphics implements GLEventListener{
 	gl.glLoadIdentity();
 	setCamera(drawable, gl, glu, camera_zoom);
 	
-	drawSky(gl);
+	//drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
-	cart.draw(gl);
-	//cube.draw(gl);
+	testcar.draw(gl);
 	
 	tracktiles[0].bind();
 	tc = tracktiles[0].getImageTexCoords();
@@ -285,7 +280,7 @@ public class GLGraphics implements GLEventListener{
     
 	loadDisplayLists(gl);
 	loadTextures(gl);
-	loadSky(gl);
+	//loadSky(gl);
 	loadModels(gl);
 	
 	renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);
@@ -309,7 +304,7 @@ public class GLGraphics implements GLEventListener{
 	animator.start();
 	
 	UIObject.initUIObjects(framewidth, frameheight);
-	overlays.add(new LapTimer());
+	//overlays.add(new LapTimer());
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {

@@ -16,26 +16,27 @@ public class Input implements KeyListener, MouseListener {
 
 	public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        float cam_distance = 0.0f;
-        float cam_angle = 0.0f;
+        float accel = 0.001f;
+        Car c = Car.getPlayerCar(1);
         
         switch (key) {
         case KeyEvent.VK_UP:
-        	cam_distance = -0.1f;
+        	c.setXAccel(c.getXAccel() + accel * (c.getXVelocity()/c.getVectorLength()));
+        	c.setYAccel(c.getYAccel() + accel * (c.getYVelocity()/c.getVectorLength()));
+        	c.setZAccel(c.getZAccel() + accel * (c.getZVelocity()/c.getVectorLength()));
             break;
         case KeyEvent.VK_DOWN:
-        	cam_distance = 0.1f;
+        	c.setXAccel(c.getXAccel() - accel * (c.getXPos()/c.getVectorLength()));
+        	c.setYAccel(c.getYAccel() - accel * (c.getYPos()/c.getVectorLength()));
+        	c.setZAccel(c.getZAccel() - accel * (c.getZPos()/c.getVectorLength()));
         	break;
         case KeyEvent.VK_LEFT:
-        	cam_angle = -3.6f;
+        	//cam_angle = -3.6f;
         	break;
         case KeyEvent.VK_RIGHT:
-        	cam_angle = 3.6f;
+        	//cam_angle = 3.6f;
         	break;
         }
-        
-        graphics.cameraZoom(cam_distance);
-        graphics.cameraRotate(cam_angle);
 	}
 
 	public void keyReleased(KeyEvent e) {}

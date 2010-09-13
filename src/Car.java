@@ -1,5 +1,11 @@
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class Car {
+import javax.media.opengl.GL2;
+
+
+public class Car extends TimerTask {
 	//THREAD: GAME
 
   //*******************************
@@ -7,26 +13,36 @@ public class Car {
   //*******************************	
 	
   private static final float DEFAULT_COLLISION_RADIUS = 50;	
-	
+  
+  private static final String modelPath = "cart-tri.obj";
+  
+  //Timer timeout, in milliseconds
+  private static final int updateRate = 40;
+  
+  private static Model model = new Model(modelPath);
+  
+  private static Timer timer = new Timer(true);
+
+  private static Car[] cars = new Car[8];
   //Position
-  float xpos, ypos, zpos;
+  private float xpos = 0, ypos = 0, zpos = 0;
   
   //Velocity
-  float xvel, yvel, zvel;
+  private float xvel = 0, yvel = 0, zvel = 0;
   
   //Acceleration
-  float xacc, yacc, zacc;
+  private float xacc = 0, yacc = 0, zacc = 0;
   
   /* Owner/controller of the car
    * 0 = Computer
    * Any other value is a player
    */
-  int owner;
+  private int owner = 0;
  
   /* Distance from the centre of the car
    * that the car will collide with objects
    */
-  float collision_radius;
+  private float collision_radius = DEFAULT_COLLISION_RADIUS;
   
   //********************************
   //Constructors
@@ -36,9 +52,36 @@ public class Car {
 	  xpos = x;
 	  ypos = y;
 	  zpos = z;
-	  //etc, zero out remaining values
-	  collision_radius = DEFAULT_COLLISION_RADIUS;
+	  timer.scheduleAtFixedRate(this , 0, updateRate);
+	  
+	  if (controller > 0 && controller <= 8)
+		  cars[controller] = this;
   }
+  
+  public static Car getPlayerCar(int controller) {
+	  return cars[controller];
+  }
+  
+  public void run() {
+	  xvel += xacc * (updateRate/1000);
+	  xpos += xvel * (updateRate/1000);
+	  yvel += yacc * (updateRate/1000);
+	  ypos += yacc * (updateRate/1000);
+	  zvel += zacc * (updateRate/1000);
+	  zpos += zvel * (updateRate/1000);
+  }
+  
+  public void draw(GL2 gl) {
+	  gl.glPushMatrix();
+	  gl.glTranslatef(xpos, ypos, zpos);
+	  model.draw(gl);
+	  gl.glPopMatrix();
+  }
+  
+  public static void modelInit(GL2 gl) {
+	  model.buildList(gl);
+  }
+  
   //********************************
   //Methods
   //********************************
@@ -59,6 +102,11 @@ public class Car {
   
   void setCollision(float collision) {
 	  collision_radius = collision;
+  }
+  
+  float getVectorLength() {
+	 double length =  Math.sqrt(xvel*xvel + yvel*yvel + zvel*zvel); 
+	 return (float) length;  
   }
   
   //Get methods for pos, vel, acc
@@ -134,4 +182,5 @@ public class Car {
   void setZAccel(float newzacc) {
 	  zacc = newzacc;
   }
+
 }
