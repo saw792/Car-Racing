@@ -5,7 +5,7 @@ public class Game {
  //Separate thread to Graphics/UI loop
 	
 	public Game() {
-		Car player1 = new Car(1, 0.0f, 0.0f, 0.0f);
+		//Car player1 = new Car(1, 0.0, 0.0, 0.0, 90.0);
 	}
 	
 	//Game loop

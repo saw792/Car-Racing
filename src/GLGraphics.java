@@ -24,7 +24,7 @@ public class GLGraphics implements GLEventListener{
   boolean fullscreen = false;
   Texture[] textures = new Texture[1];
   TextureCoords tc;
-  Car testcar = new Car(1, 0.0f, 0.0f, 0.0f);;
+  Car testcar = new Car(1, 0.0, 0.0, 0.0, 90.0);;
   
   int framewidth = 0;
   int frameheight = 0;
@@ -234,7 +234,7 @@ public class GLGraphics implements GLEventListener{
 	gl.glLoadIdentity();
 	setCamera(drawable, gl, glu, camera_zoom);
 	
-	//drawSky(gl);
+	drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
@@ -280,7 +280,7 @@ public class GLGraphics implements GLEventListener{
     
 	loadDisplayLists(gl);
 	loadTextures(gl);
-	//loadSky(gl);
+	loadSky(gl);
 	loadModels(gl);
 	
 	renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);

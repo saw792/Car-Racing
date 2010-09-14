@@ -4,34 +4,54 @@ import java.util.TimerTask;
 
 import javax.media.opengl.GL2;
 
-
 public class Car extends TimerTask {
 	//THREAD: GAME
 
   //*******************************
   //Fields	
   //*******************************	
+
+  public enum TurnStatus { NOT_TURNING, TURNING_LEFT, TURNING_RIGHT };
+  public enum Acceleration { NOT_ACCELERATING, FORWARD, BACKWARDS };
 	
-  private static final float DEFAULT_COLLISION_RADIUS = 50;	
+  private static final double DEFAULT_COLLISION_RADIUS = 50;
   
   private static final String modelPath = "cart-tri.obj";
   
-  //Timer timeout, in milliseconds
+  private static final double drag = 0.05;
+  
+  private static final double maxangle = 60.0;
+  
   private static final int updateRate = 40;
+  
+  private static final double facingacc = 60.0;
+  
+  private static final double baseacc = 1.0;
+  
+  
   
   private static Model model = new Model(modelPath);
   
   private static Timer timer = new Timer(true);
 
   private static Car[] cars = new Car[8];
+  
+  
+  
+  private TurnStatus turning = TurnStatus.NOT_TURNING;
+  
+  private double startangle = 0 ;
+  
   //Position
-  private float xpos = 0, ypos = 0, zpos = 0;
+  private double xpos = 0, ypos = 0, zpos = 0;
   
   //Velocity
-  private float xvel = 0, yvel = 0, zvel = 0;
+  private double xvel = 0, yvel = 0, zvel = 0;
   
   //Acceleration
-  private float xacc = 0, yacc = 0, zacc = 0;
+  private double xacc = 0, yacc = 0, zacc = 0;
+  
+  private double facing = 0, facingvel = 0;
   
   /* Owner/controller of the car
    * 0 = Computer
@@ -42,16 +62,17 @@ public class Car extends TimerTask {
   /* Distance from the centre of the car
    * that the car will collide with objects
    */
-  private float collision_radius = DEFAULT_COLLISION_RADIUS;
+  private double collision_radius = DEFAULT_COLLISION_RADIUS;
   
   //********************************
   //Constructors
   //********************************
-  public Car(int controller, float x, float y, float z) {
+  public Car(int controller, double x, double y, double z, double faceAngle) {
 	  owner = controller;
 	  xpos = x;
 	  ypos = y;
 	  zpos = z;
+	  facing = faceAngle;
 	  timer.scheduleAtFixedRate(this , 0, updateRate);
 	  
 	  if (controller > 0 && controller <= 8)
@@ -63,17 +84,32 @@ public class Car extends TimerTask {
   }
   
   public void run() {
-	  xvel += xacc * (updateRate/1000);
-	  xpos += xvel * (updateRate/1000);
-	  yvel += yacc * (updateRate/1000);
-	  ypos += yacc * (updateRate/1000);
-	  zvel += zacc * (updateRate/1000);
-	  zpos += zvel * (updateRate/1000);
+	  double turnacc = 0;
+	  if (turning == TurnStatus.TURNING_LEFT) {
+		  if 
+		  turnacc = facingacc;
+	  } else if (turning == TurnStatus.TURNING_RIGHT){
+		  turnacc = -facingacc;
+	  }
+	  
+	  double frequency = updateRate/1000.0;
+	  xvel += (xacc - (0.5 * drag * xvel * xvel)) * frequency;
+	  xpos += xvel * frequency;
+	  yvel += yacc * frequency;
+	  ypos += yacc * frequency;
+	  zvel += (zacc - (0.5 * drag * zvel * zvel)) * frequency;
+	  zpos += zvel * frequency;
+	  facingvel += facingacc * frequency;
+	  facing += facingvel * frequency;
+	  //System.out.println("xvel: " + xvel + "  xpos: " + xpos);
+	  //System.out.println("yvel: " + yvel + "  ypos: " + ypos);
+	  //System.out.println("zvel: " + zvel + "  zpos: " + zpos);
   }
   
   public void draw(GL2 gl) {
 	  gl.glPushMatrix();
-	  gl.glTranslatef(xpos, ypos, zpos);
+	  gl.glTranslatef((float)xpos, (float)ypos, (float)zpos);
+	  gl.glRotatef(90 + (float) facing, 0.0f, 1.0f, 0.0f);
 	  model.draw(gl);
 	  gl.glPopMatrix();
   }
@@ -96,90 +132,93 @@ public class Car extends TimerTask {
   }
   
   //Get/Set methods for collision radius
-  float getCollision() {
+  double getCollision() {
 	  return collision_radius;
   }
   
-  void setCollision(float collision) {
+  void setCollision(double collision) {
 	  collision_radius = collision;
   }
   
-  float getVectorLength() {
-	 double length =  Math.sqrt(xvel*xvel + yvel*yvel + zvel*zvel); 
-	 return (float) length;  
+  double getFacingAngle() {
+	  return facing;
+  }
+  
+  void setFacingAngle(double degrees) {
+	  facing = degrees;
   }
   
   //Get methods for pos, vel, acc
-  float getXPos() {
+  double getXPos() {
 	  return xpos;
   }
   
-  float getYPos() {
+  double getYPos() {
 	  return ypos;
   }
   
-  float getZPos() {
+  double getZPos() {
 	  return zpos;
   }
   
-  float getXVelocity() {
+  double getXVelocity() {
 	  return xvel;
   }
   
-  float getYVelocity() {
+  double getYVelocity() {
 	  return yvel;
   }
   
-  float getZVelocity() {
+  double getZVelocity() {
 	  return zvel;
   }
   
-  float getXAccel() {
+  double getXAccel() {
 	  return xacc;
   }
   
-  float getYAccel() {
+  double getYAccel() {
 	  return yacc;
   }
   
-  float getZAccel() {
+  double getZAccel() {
 	  return zacc;
   }
   
   //Set methods for pos, vel, acc
-  void setXPos(float newxpos) {
+  void setXPos(double newxpos) {
 	  xpos = newxpos;
   }
   
-  void setYPos(float newypos) {
+  void setYPos(double newypos) {
 	  ypos = newypos;
   }
   
-  void setZPos(float newzpos) {
+  void setZPos(double newzpos) {
 	  zpos = newzpos;
   }
   
-  void setXVelocity(float newxvel) {
+  void setXVelocity(double newxvel) {
 	  xvel = newxvel;
   }
   
-  void setYVelocity(float newyvel) {
+  void setYVelocity(double newyvel) {
 	  yvel = newyvel;
   }
   
-  void setZVelocity(float newzvel) {
+  void setZVelocity(double newzvel) {
 	  zvel = newzvel;
   }
   
-  void setXAccel(float newxacc) {
+  void setXAccel(double newxacc) {
 	  xacc = newxacc;
   }
   
-  void setYAccel(float newyacc) {
+  void setYAccel(double newyacc) {
 	  yacc = newyacc;
   }
   
-  void setZAccel(float newzacc) {
+  void setZAccel(double newzacc) {
 	  zacc = newzacc;
   }
 

@@ -16,30 +16,49 @@ public class Input implements KeyListener, MouseListener {
 
 	public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        float accel = 0.001f;
+        double accel = 1.0;
+        double turnrate = 60.0;
         Car c = Car.getPlayerCar(1);
         
         switch (key) {
         case KeyEvent.VK_UP:
-        	c.setXAccel(c.getXAccel() + accel * (c.getXVelocity()/c.getVectorLength()));
-        	c.setYAccel(c.getYAccel() + accel * (c.getYVelocity()/c.getVectorLength()));
-        	c.setZAccel(c.getZAccel() + accel * (c.getZVelocity()/c.getVectorLength()));
+        	c.setXAccel(accel * Math.cos(Math.toRadians(c.getFacingAngle())));
+        	c.setZAccel(-accel * Math.sin(Math.toRadians(c.getFacingAngle())));
             break;
         case KeyEvent.VK_DOWN:
-        	c.setXAccel(c.getXAccel() - accel * (c.getXPos()/c.getVectorLength()));
-        	c.setYAccel(c.getYAccel() - accel * (c.getYPos()/c.getVectorLength()));
-        	c.setZAccel(c.getZAccel() - accel * (c.getZPos()/c.getVectorLength()));
+        	c.setXAccel(-accel * Math.cos(Math.toRadians(c.getFacingAngle())));
+        	c.setZAccel(accel * Math.sin(Math.toRadians(c.getFacingAngle())));
         	break;
         case KeyEvent.VK_LEFT:
-        	//cam_angle = -3.6f;
+        	c.setFacingAcc(turnrate);
         	break;
         case KeyEvent.VK_RIGHT:
-        	//cam_angle = 3.6f;
+        	c.setFacingAcc(-turnrate);
         	break;
         }
 	}
 
-	public void keyReleased(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+		int key = e.getKeyCode();
+		Car c = Car.getPlayerCar(1);
+		
+		switch (key) {
+        case KeyEvent.VK_UP:
+        	c.setXAccel(0);
+        	c.setZAccel(0);
+            break;
+        case KeyEvent.VK_DOWN:
+        	c.setXAccel(0);
+        	c.setZAccel(0);
+        	break;
+        case KeyEvent.VK_LEFT:
+        	c.setFacingAcc(0);
+        	break;
+        case KeyEvent.VK_RIGHT:
+        	c.setFacingAcc(0);
+        	break;
+        }
+	}
 
 	public void mouseClicked(MouseEvent e) {
 
