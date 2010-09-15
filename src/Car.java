@@ -18,9 +18,9 @@ public class Car extends TimerTask {
   
   private static final String modelPath = "cart-tri.obj";
   
-  private static final double drag = 0.05;
+  private static final double drag = 0.9;
   
-  private static final double maxangle = 60.0;
+  private static final double maxangle = 45.0;
   
   private static final int updateRate = 40;
   
@@ -85,25 +85,65 @@ public class Car extends TimerTask {
   
   public void run() {
 	  double turnacc = 0;
-	  if (turning == TurnStatus.TURNING_LEFT) {
-		  if 
-		  turnacc = facingacc;
+	  double frequency = updateRate/1000.0;
+	  double veldirection = Math.toDegrees(Math.atan2(-zvel,xvel));
+	  
+	  if (veldirection < 0)
+		  veldirection += 360;
+	  
+	  if (turning == TurnStatus.NOT_TURNING) {
+		  if (facing > veldirection)
+			  turnacc = 1/-facingacc;
+		  if (facing < veldirection)
+			  turnacc = 1/facingacc;
+		  
+	  } else if (turning == TurnStatus.TURNING_LEFT) {
+		  if (facing - veldirection > maxangle) {
+			  turning = TurnStatus.NOT_TURNING;
+			  turnacc = 0;
+			  facingvel = 0;
+		  } else
+		      turnacc = facingacc;
 	  } else if (turning == TurnStatus.TURNING_RIGHT){
-		  turnacc = -facingacc;
+		  if (facing - veldirection < -maxangle) {
+			  turning = TurnStatus.NOT_TURNING;
+			  turnacc = 0;
+			  facingvel = 0;
+		  } else
+		      turnacc = -facingacc;
 	  }
 	  
-	  double frequency = updateRate/1000.0;
-	  xvel += (xacc - (0.5 * drag * xvel * xvel)) * frequency;
+		  
+	  if (facing > 360)
+		  facing = 0;
+	  if (facing < 0)
+		  facing = 360;
+	  
+	  xvel += (xacc - Math.signum(xvel) * (0.5 * drag * xvel * xvel)) * frequency;
 	  xpos += xvel * frequency;
 	  yvel += yacc * frequency;
 	  ypos += yacc * frequency;
-	  zvel += (zacc - (0.5 * drag * zvel * zvel)) * frequency;
+	  zvel += -(zacc - Math.signum(-zvel) *(0.5 * drag * zvel * zvel)) * frequency;
 	  zpos += zvel * frequency;
-	  facingvel += facingacc * frequency;
+	  facingvel += turnacc * frequency;
 	  facing += facingvel * frequency;
 	  //System.out.println("xvel: " + xvel + "  xpos: " + xpos);
 	  //System.out.println("yvel: " + yvel + "  ypos: " + ypos);
 	  //System.out.println("zvel: " + zvel + "  zpos: " + zpos);
+  }
+  
+  public void turn(int direction) {
+	 switch (direction) {
+	   case 1:
+		   turning = TurnStatus.TURNING_LEFT;
+		   break;
+	   case -1:
+		   turning = TurnStatus.TURNING_RIGHT;
+		   break;
+	   default:
+		   turning = TurnStatus.NOT_TURNING;
+	 }
+	 
   }
   
   public void draw(GL2 gl) {

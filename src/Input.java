@@ -3,6 +3,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+
 public class Input implements KeyListener, MouseListener {
 
 	GLGraphics graphics;
@@ -17,23 +18,22 @@ public class Input implements KeyListener, MouseListener {
 	public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         double accel = 1.0;
-        double turnrate = 60.0;
         Car c = Car.getPlayerCar(1);
         
         switch (key) {
         case KeyEvent.VK_UP:
         	c.setXAccel(accel * Math.cos(Math.toRadians(c.getFacingAngle())));
-        	c.setZAccel(-accel * Math.sin(Math.toRadians(c.getFacingAngle())));
+        	c.setZAccel(accel * Math.sin(Math.toRadians(c.getFacingAngle())));
             break;
         case KeyEvent.VK_DOWN:
         	c.setXAccel(-accel * Math.cos(Math.toRadians(c.getFacingAngle())));
-        	c.setZAccel(accel * Math.sin(Math.toRadians(c.getFacingAngle())));
+        	c.setZAccel(-accel * Math.sin(Math.toRadians(c.getFacingAngle())));
         	break;
         case KeyEvent.VK_LEFT:
-        	c.setFacingAcc(turnrate);
+        	c.turn(1);
         	break;
         case KeyEvent.VK_RIGHT:
-        	c.setFacingAcc(-turnrate);
+        	c.turn(-1);
         	break;
         }
 	}
@@ -52,10 +52,10 @@ public class Input implements KeyListener, MouseListener {
         	c.setZAccel(0);
         	break;
         case KeyEvent.VK_LEFT:
-        	c.setFacingAcc(0);
+        	c.turn(0);
         	break;
         case KeyEvent.VK_RIGHT:
-        	c.setFacingAcc(0);
+        	c.turn(0);
         	break;
         }
 	}

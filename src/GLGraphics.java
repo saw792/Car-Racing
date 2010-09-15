@@ -234,7 +234,7 @@ public class GLGraphics implements GLEventListener{
 	gl.glLoadIdentity();
 	setCamera(drawable, gl, glu, camera_zoom);
 	
-	drawSky(gl);
+	//drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
@@ -280,7 +280,7 @@ public class GLGraphics implements GLEventListener{
     
 	loadDisplayLists(gl);
 	loadTextures(gl);
-	loadSky(gl);
+	//loadSky(gl);
 	loadModels(gl);
 	
 	renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);
