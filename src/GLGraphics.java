@@ -24,7 +24,6 @@ public class GLGraphics implements GLEventListener{
   boolean fullscreen = false;
   Texture[] textures = new Texture[1];
   TextureCoords tc;
-  Car testcar = new Car(1, 0.0, 0.0, 0.0, 90.0);;
   
   int framewidth = 0;
   int frameheight = 0;
@@ -238,7 +237,7 @@ public class GLGraphics implements GLEventListener{
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
-	testcar.draw(gl);
+	Car.getPlayerCar(1).draw(gl);
 	
 	tracktiles[0].bind();
 	tc = tracktiles[0].getImageTexCoords();
@@ -304,7 +303,7 @@ public class GLGraphics implements GLEventListener{
 	animator.start();
 	
 	UIObject.initUIObjects(framewidth, frameheight);
-	//overlays.add(new LapTimer());
+	overlays.add(new LapTimer());
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {

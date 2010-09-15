@@ -13,16 +13,19 @@
  * 
  */
 
+import java.awt.Color;
 import java.util.Calendar;
 
 public class LapTimer extends UIObject {
-    //THREAD: GRAPHICS/UI
-    private static int width = 200;
-    private static int height = 100;
+    
+	//THREAD: GRAPHICS/UI
+    private static int width = 100;
+    private static int height = 50;
     private static int xpos = 0;
     private static int ypos = 0;
     private static int buffer = 30;
-   
+    
+       
     private long startTime = 0;
     private long stopTime = 0;
    
@@ -32,15 +35,16 @@ public class LapTimer extends UIObject {
     public LapTimer() {
     	xpos = maxwidth - (width + buffer);
     	ypos = buffer;
+    	
     	start();
     }
 
-	public long getTime() {
+	public String getTime() {
         if (running){
             long currentTime = Calendar.getInstance().getTimeInMillis();
-            return currentTime - startTime;
+            return formatTime(currentTime - startTime);
         }else {
-            return stopTime - startTime;
+            return formatTime(stopTime - startTime);
         }
     }
    
@@ -55,8 +59,12 @@ public class LapTimer extends UIObject {
     }
    
     public void update() {
+    	graphics.setColor(Color.BLACK);
+    	graphics.fillRoundRect(xpos, ypos, width, height, 5, 5);
+    	graphics.setColor(Color.WHITE);
     	graphics.drawRoundRect(xpos, ypos, width, height, 5, 5);
-    	graphics.drawString(formatTime(getTime()), xpos, ypos);
+    	graphics.drawString("Lap Timer", ((xpos + width/2) - ("Lap Timer".length()*	6)/2), ypos + height/3);
+    	graphics.drawString(getTime(), ((xpos + width/2) - (getTime().length()*6)/2) , ypos + height - 10 );
     }
     
     private String formatTime(long time){

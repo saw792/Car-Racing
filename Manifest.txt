@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: CarRacing
+Class-Path: /students/u4849485/gluegen-rt.jar /students/u4849485/jogl.all.jar /students/u4849485/nativewindow.all.jar /students/u4849485/newt.all.jar
+

@@ -1,11 +1,13 @@
-import java.util.ArrayList;
+/*
+ * Author: Sean Wild
+ */
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.media.opengl.GL2;
 
 public class Car extends TimerTask {
-	//THREAD: GAME
 
   //*******************************
   //Fields	
@@ -39,8 +41,6 @@ public class Car extends TimerTask {
   
   
   private TurnStatus turning = TurnStatus.NOT_TURNING;
-  
-  private double startangle = 0 ;
   
   //Position
   private double xpos = 0, ypos = 0, zpos = 0;
