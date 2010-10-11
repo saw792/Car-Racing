@@ -87,7 +87,7 @@ public class GLGraphics implements GLEventListener{
   
   private void loadTextures(GL2 gl) {
 	  try {
-	  textures[0] = TextureIO.newTexture(new File("Sunset.jpg"), false);
+	  textures[0] = TextureIO.newTexture(new File("textures/ferrari.png"), false);
 	  skytex[0] = TextureIO.newTexture(new File("sky/skyfront.jpg"), false);
 	  skytex[1] = TextureIO.newTexture(new File("sky/skyleft.jpg"), false);
 	  skytex[2] = TextureIO.newTexture(new File("sky/skyback.jpg"), false);
@@ -95,7 +95,7 @@ public class GLGraphics implements GLEventListener{
 	  skytex[4] = TextureIO.newTexture(new File("sky/skytop.jpg"), false);
 	  hi_res_sky[0] = TextureIO.newTexture(new File("sky/hirestest1.jpg"), false);
 	  
-	  tracktiles[0] = TextureIO.newTexture(new File("Asphalt.tga"), false);
+	  tracktiles[0] = TextureIO.newTexture(new File("textures/Asphalt.tga"), false);
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
@@ -233,7 +233,7 @@ public class GLGraphics implements GLEventListener{
 	gl.glLoadIdentity();
 	setCamera(drawable, gl, glu, camera_zoom);
 	
-	//drawSky(gl);
+	drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
@@ -279,7 +279,7 @@ public class GLGraphics implements GLEventListener{
     
 	loadDisplayLists(gl);
 	loadTextures(gl);
-	//loadSky(gl);
+	loadSky(gl);
 	loadModels(gl);
 	
 	renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);

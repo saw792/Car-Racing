@@ -18,7 +18,7 @@ public class Car extends TimerTask {
 	
   private static final double DEFAULT_COLLISION_RADIUS = 50;
   
-  private static final String modelPath = "cart-tri.obj";
+  private static final String modelPath = "models/ferrari.obj";
   
   private static final double drag = 0.9;
   
@@ -143,13 +143,13 @@ public class Car extends TimerTask {
 	   default:
 		   turning = TurnStatus.NOT_TURNING;
 	 }
-	 
   }
   
   public void draw(GL2 gl) {
 	  gl.glPushMatrix();
 	  gl.glTranslatef((float)xpos, (float)ypos, (float)zpos);
 	  gl.glRotatef(90 + (float) facing, 0.0f, 1.0f, 0.0f);
+	  //gl.glColor3f(1.0f, 0.0f, 0.0f);
 	  model.draw(gl);
 	  gl.glPopMatrix();
   }
