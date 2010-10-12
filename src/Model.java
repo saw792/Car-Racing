@@ -167,7 +167,7 @@ public class Model {
 				  gl.glTexCoord2f(DEFAULT_TC_VALUES[0], DEFAULT_TC_VALUES[1]);
 				  break;
 			  default:
-				  gl.glTexCoord2f(texture_coords[(tc_index - 1) * 2], texture_coords[(tc_index - 1) * 2 + 1]);
+				  gl.glTexCoord2f(texture_coords[(tc_index - 1) * 2], 1 - texture_coords[(tc_index - 1) * 2 + 1]);
 			  }
 			  
 			  switch (n_index) {
