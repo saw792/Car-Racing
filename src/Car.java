@@ -146,9 +146,11 @@ public class Car extends TimerTask {
   }
   
   public void draw(GL2 gl) {
+	  gl.glRotatef(90 - (float) facing, 0.0f, 1.0f, 0.0f);
+	  gl.glTranslatef(-(float)xpos, -(float)ypos, -(float)zpos);
 	  gl.glPushMatrix();
-	  gl.glScalef(0.2f, 0.2f, 0.2f);
-	  gl.glTranslatef((float)xpos, (float)ypos, (float)zpos);
+	  gl.glScalef(0.4f, 0.4f, 0.4f);
+	  gl.glTranslatef((float)xpos / 0.4f, (float)ypos / 0.4f, (float)zpos / 0.4f);
 	  gl.glRotatef(90 + (float) facing, 0.0f, 1.0f, 0.0f);
 	  model.draw(gl);
 	  gl.glPopMatrix();

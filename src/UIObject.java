@@ -1,7 +1,7 @@
 import java.awt.Graphics2D;
 import com.jogamp.opengl.util.awt.TextureRenderer;
  
-public class UIObject {
+abstract class UIObject {
     //THREAD: GRAPHICS/UI
      
     //2D user interface component
@@ -18,8 +18,8 @@ public class UIObject {
     	//graphics = tr.createGraphics();
     }
     
-    //Designed to be overwritten
-    public void update() {}
+    //Designed to be overridden
+    abstract void update();
     
     public static void updateAll(int screenWidth, int screenHeight) {
     	tr.beginOrthoRendering(screenWidth, screenHeight);

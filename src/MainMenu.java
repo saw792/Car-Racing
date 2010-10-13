@@ -4,4 +4,6 @@ public class MainMenu extends UIObject {
   //Action and event responses for button clicking
   //Events should be passed through from graphics library
   public MainMenu() {}
+  
+  public void update() {}
 }
