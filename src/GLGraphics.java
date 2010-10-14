@@ -88,14 +88,14 @@ public class GLGraphics implements GLEventListener{
   private void loadTextures(GL2 gl) {
 	  try {
 	  textures[0] = TextureIO.newTexture(new File("textures/ferrari.png"), false);
-	  skytex[0] = TextureIO.newTexture(new File("sky/skyfront.jpg"), false);
-	  skytex[1] = TextureIO.newTexture(new File("sky/skyleft.jpg"), false);
-	  skytex[2] = TextureIO.newTexture(new File("sky/skyback.jpg"), false);
-	  skytex[3] = TextureIO.newTexture(new File("sky/skyright.jpg"), false);
-	  skytex[4] = TextureIO.newTexture(new File("sky/skytop.jpg"), false);
-	  hi_res_sky[0] = TextureIO.newTexture(new File("sky/hirestest1.jpg"), false);
+	  skytex[0] = TextureIO.newTexture(new File("textures/sky/skyfront.jpg"), false);
+	  skytex[1] = TextureIO.newTexture(new File("textures/sky/skyleft.jpg"), false);
+	  skytex[2] = TextureIO.newTexture(new File("textures/sky/skyback.jpg"), false);
+	  skytex[3] = TextureIO.newTexture(new File("textures/sky/skyright.jpg"), false);
+	  skytex[4] = TextureIO.newTexture(new File("textures/sky/skytop.jpg"), false);
+	  hi_res_sky[0] = TextureIO.newTexture(new File("textures/sky/hirestest1.jpg"), false);
 	  
-	  tracktiles[0] = TextureIO.newTexture(new File("textures/Asphalt.tga"), false);
+	  tracktiles[0] = TextureIO.newTexture(new File("textures/track/track.jpg"), false);
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
@@ -302,7 +302,7 @@ public class GLGraphics implements GLEventListener{
 	
 	animator.start();
 	
-	UIObject.initUIObjects(framewidth, frameheight);
+	UIObject.initUIObjects(drawable, framewidth, frameheight);
 	overlays.add(new LapTimer());
   }
 

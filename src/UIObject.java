@@ -1,5 +1,9 @@
 import java.awt.Graphics2D;
+
+import javax.media.opengl.GLAutoDrawable;
+
 import com.jogamp.opengl.util.awt.TextureRenderer;
+import com.jogamp.opengl.util.awt.Overlay;
  
 abstract class UIObject {
     //THREAD: GRAPHICS/UI
@@ -7,34 +11,27 @@ abstract class UIObject {
     //2D user interface component
     //Holds a certain xy position on the screen (opengl coords not track coords)
     //Has a certain width and height
-         
-    private static TextureRenderer tr;
+    
+    private static Overlay ov;
     protected static Graphics2D graphics;
     
     protected static int maxwidth;
     protected static int maxheight;
     
-    public UIObject() {
-    	//graphics = tr.createGraphics();
-    }
-    
     //Designed to be overridden
     abstract void update();
     
     public static void updateAll(int screenWidth, int screenHeight) {
-    	tr.beginOrthoRendering(screenWidth, screenHeight);
-    	tr.drawOrthoRect(0, 0);
-    	tr.endOrthoRendering();
+    	ov.drawAll();
+    	ov.markDirty(0, 0, maxwidth, maxheight);
     	graphics.dispose();
-    	tr.dispose();
-        tr = new TextureRenderer(screenWidth, screenHeight, true);
-    	graphics = tr.createGraphics();
+    	graphics = ov.createGraphics();
     }
     
-    public static void initUIObjects(int screenWidth, int screenHeight) {
+    public static void initUIObjects(GLAutoDrawable drawable, int screenWidth, int screenHeight) {
     	maxwidth = screenWidth;
     	maxheight = screenHeight;
-    	tr = new TextureRenderer(screenWidth, screenHeight, true);
-    	graphics = tr.createGraphics();
+    	ov = new Overlay(drawable);
+    	graphics = ov.createGraphics();
     }
 }
