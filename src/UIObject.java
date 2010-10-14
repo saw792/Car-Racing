@@ -17,9 +17,12 @@ abstract class UIObject {
     
     protected static int maxwidth;
     protected static int maxheight;
+    protected boolean show = false;
     
     //Designed to be overridden
     abstract void update();
+    
+    abstract void show(boolean toShow);
     
     public static void updateAll(int screenWidth, int screenHeight) {
     	ov.drawAll();

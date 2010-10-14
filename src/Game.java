@@ -1,14 +1,18 @@
+import java.util.ArrayList;
+
 
 public class Game {
- //Contains the main game loop
- //Passes state changes through to physics to manipulate cars
- //Separate thread to Graphics/UI loop
 	
 	public Game() {
+		ArrayList<UIObject> ui = GLGraphics.overlays;
+		MainMenu menu1 = new MainMenu();
+		ui.add(menu1);
+		
+		menu1.show(true);
+		
 		Car player1 = new Car(1, 0.0, 0.0, 0.0, 90.0);
 	}
 	
-	//Game loop
 	public void start(){}
 	
 	public void destroy(){}

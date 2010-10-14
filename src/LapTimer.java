@@ -31,7 +31,11 @@ public class LapTimer extends UIObject {
    
    
     private boolean running = false;
-        
+     
+    public void show(boolean toShow) {
+    	show = toShow;
+    }
+    
     public LapTimer() {
     	xpos = maxwidth - (width + buffer);
     	ypos = buffer;
@@ -59,12 +63,14 @@ public class LapTimer extends UIObject {
     }
    
     public void update() {
-    	graphics.setColor(Color.BLACK);
-    	graphics.fillRoundRect(xpos, ypos, width, height, 5, 5);
-    	graphics.setColor(Color.WHITE);
-    	graphics.drawRoundRect(xpos, ypos, width, height, 5, 5);
-    	graphics.drawString("Lap Timer", ((xpos + width/2) - ("Lap Timer".length()*	6)/2), ypos + height/3);
-    	graphics.drawString(getTime(), ((xpos + width/2) - (getTime().length()*6)/2) , ypos + height - 10 );
+    	if (show) {
+    		graphics.setColor(Color.BLACK);
+    		graphics.fillRoundRect(xpos, ypos, width, height, 5, 5);
+    		graphics.setColor(Color.WHITE);
+    		graphics.drawRoundRect(xpos, ypos, width, height, 5, 5);
+    		graphics.drawString("Lap Timer", ((xpos + width/2) - ("Lap Timer".length()*	6)/2), ypos + height/3);
+    		graphics.drawString(getTime(), ((xpos + width/2) - (getTime().length()*6)/2) , ypos + height - 10 );
+    	}
     }
     
     private String formatTime(long time){

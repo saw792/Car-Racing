@@ -34,7 +34,7 @@ public class GLGraphics implements GLEventListener{
   Texture[] hi_res_sky = new Texture[1];
   int sky;
   
-  ArrayList<UIObject> overlays = new ArrayList<UIObject>();
+  static ArrayList<UIObject> overlays = new ArrayList<UIObject>();
   
   int listsToDraw;
   
@@ -303,7 +303,7 @@ public class GLGraphics implements GLEventListener{
 	animator.start();
 	
 	UIObject.initUIObjects(drawable, framewidth, frameheight);
-	overlays.add(new LapTimer());
+	//overlays.add(new LapTimer());
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
