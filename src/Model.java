@@ -14,11 +14,12 @@
  *  Sean Wild
  */
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+
 import javax.media.opengl.GL2;
 
-public class Model {
+public class Model implements Graphics3DObject{
 
 	/* Texture coordinate and normal indices to use
 	 * when none exist in model file
@@ -61,7 +62,7 @@ public class Model {
 		String[] attributes;
 		
 		try {
-		  reader = new BufferedReader(new FileReader(filepath));
+		  reader = new BufferedReader(new InputStreamReader(Model.class.getClass().getResourceAsStream(filepath)));
 		  
 		  while (reader.ready()) {
 			  line = reader.readLine();
@@ -78,7 +79,7 @@ public class Model {
 		  }
 			
 		  reader.close();
-		  reader = new BufferedReader(new FileReader(filepath));
+		  reader = new BufferedReader(new InputStreamReader(Model.class.getClass().getResourceAsStream(filepath)));
 		  
 		  vertices = new float[vertex_count * 3];
 		  texture_coords = new float[tc_count * 2];
@@ -189,7 +190,7 @@ public class Model {
 		gl.glCallList(displayList);
 	}
 	
-	public void deleteLists(GL2 gl) {
+	public void clearList(GL2 gl) {
 	  gl.glDeleteLists(displayList, 1);	
 	}
 	

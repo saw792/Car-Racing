@@ -24,6 +24,8 @@ abstract class UIObject {
     
     abstract void show(boolean toShow);
     
+    abstract boolean isShowing();
+    
     public static void updateAll(int screenWidth, int screenHeight) {
     	ov.drawAll();
     	ov.markDirty(0, 0, maxwidth, maxheight);

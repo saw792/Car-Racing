@@ -18,7 +18,7 @@ public class Car extends TimerTask {
 	
   private static final double DEFAULT_COLLISION_RADIUS = 50;
   
-  private static final String modelPath = "models/ferrari.obj";
+  private static final String modelPath = "/models/ferrari.obj";
   
   private static final double drag = 0.9;
   
@@ -36,7 +36,7 @@ public class Car extends TimerTask {
   
   private static Timer timer = new Timer(true);
 
-  private static Car[] cars = new Car[8];
+  private static Car[] cars = new Car[2];
   
   
   
@@ -75,7 +75,7 @@ public class Car extends TimerTask {
 	  facing = faceAngle;
 	  timer.scheduleAtFixedRate(this , 0, updateRate);
 	  
-	  if (controller > 0 && controller <= 8)
+	  if (controller == 0 || controller == 1)
 		  cars[controller] = this;
   }
   
@@ -127,12 +127,39 @@ public class Car extends TimerTask {
 	  zpos += zvel * frequency;
 	  facingvel += turnacc * frequency;
 	  facing += facingvel * frequency;
-	  //System.out.println("xvel: " + xvel + "  xpos: " + xpos);
-	  //System.out.println("yvel: " + yvel + "  ypos: " + ypos);
-	  //System.out.println("zvel: " + zvel + "  zpos: " + zpos);
   }
   
-  public void turn(int direction) {
+  public void keyPress(int direction) {
+	  switch (direction) {
+	  	case 1:
+	  		setXAccel(baseacc * Math.cos(Math.toRadians(facing)));
+        	setZAccel(baseacc * Math.sin(Math.toRadians(facing)));
+	  	case 2:
+	  		setXAccel(-baseacc * Math.cos(Math.toRadians(facing)));
+        	setZAccel(-baseacc * Math.sin(Math.toRadians(facing)));
+	  	case 3:
+	  		turn(1);
+	  	case 4:
+	  		turn(-1);
+	  }
+  }
+  
+  public void keyRelease(int direction) {
+	  switch (direction) {
+	  	case 1:
+	  		setXAccel(0);
+        	setZAccel(0);
+	  	case 2:
+	  		setXAccel(0);
+        	setZAccel(0);
+	  	case 3:
+	  		turn(0);
+	  	case 4:
+	  		turn(0);
+	  }
+  }
+  
+  private void turn(int direction) {
 	 switch (direction) {
 	   case 1:
 		   turning = TurnStatus.TURNING_LEFT;

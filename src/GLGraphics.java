@@ -1,52 +1,42 @@
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Toolkit;
-import java.io.File;
 import java.util.ArrayList;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.*;
 import javax.swing.*;
 import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.awt.*;
 import com.jogamp.opengl.util.texture.*;
 
 
 public class GLGraphics implements GLEventListener{
-  TextRenderer renderer;
-  GLU glu;
-  GLCapabilities capabilities;
-  JFrame frame;
-  GLCanvas canvas;
-  FPSAnimator animator;
-  boolean hardwareaccel = true;
-  boolean fullscreen = false;
-  Texture[] textures = new Texture[1];
-  TextureCoords tc;
+  private GLU glu;
+  private GLCapabilities capabilities;
+  private JFrame frame;
+  private GLCanvas canvas;
+  private FPSAnimator animator;
+  private Texture[] textures = new Texture[1];
+  private TextureCoords tc;
   
-  int framewidth = 0;
-  int frameheight = 0;
+  private int framewidth = 0;
+  private int frameheight = 0;
   
-  Texture[] tracktiles = new Texture[10];
+  private Texture[] tracktiles = new Texture[10];
   
-  Texture[] skytex = new Texture[5];
-  Texture[] hi_res_sky = new Texture[1];
-  int sky;
+  private Texture[] skytex = new Texture[5];
+  private Texture[] hi_res_sky = new Texture[1];
+  private int sky;
   
   static ArrayList<UIObject> overlays = new ArrayList<UIObject>();
   
-  int listsToDraw;
+  //float camera_zoom = 10;
+  //float camera_rotate = 0;
   
-  float camera_zoom = 10;
-  float camera_rotate = 0;
-  
-  public GLGraphics(boolean windowed) {
-	  Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+  public GLGraphics() {
+	  Dimension d = new Dimension(1024, 768);//Toolkit.getDefaultToolkit().getScreenSize();
 	  frame = new JFrame("Car Racing");
 	  //Specify initial canvas options
 	  capabilities = new GLCapabilities(GLProfile.getDefault());
-	  capabilities.setHardwareAccelerated(hardwareaccel);
+	  capabilities.setHardwareAccelerated(true);
 	  capabilities.setDoubleBuffered(true);
 	  capabilities.setRedBits(8);
 	  capabilities.setBlueBits(8);
@@ -57,7 +47,6 @@ public class GLGraphics implements GLEventListener{
 	  canvas.addGLEventListener(this);
 	  
 	  frame.add(canvas);
-	  frame.setUndecorated(!windowed);
 	  frame.setSize(d);
 	  
 	  framewidth = d.width;
@@ -71,31 +60,17 @@ public class GLGraphics implements GLEventListener{
 	  return canvas;
   }
   
-  public void cameraZoom (float distance) {
-	  camera_zoom += distance;
-  }
-  
-  public void cameraRotate (float angle) {
-	  camera_rotate += angle;
-  }
-  
-  public void printText(String text) {
-	  renderer.begin3DRendering();
-	  renderer.draw3D(text,(float) -Math.sin(Math.toRadians(camera_rotate)), 1.0f,(float) -Math.cos(Math.toRadians(camera_rotate)), 0.01f);
-	  renderer.end3DRendering();
-  }
-  
   private void loadTextures(GL2 gl) {
 	  try {
-	  textures[0] = TextureIO.newTexture(new File("textures/ferrari.png"), false);
-	  skytex[0] = TextureIO.newTexture(new File("textures/sky/skyfront.jpg"), false);
-	  skytex[1] = TextureIO.newTexture(new File("textures/sky/skyleft.jpg"), false);
-	  skytex[2] = TextureIO.newTexture(new File("textures/sky/skyback.jpg"), false);
-	  skytex[3] = TextureIO.newTexture(new File("textures/sky/skyright.jpg"), false);
-	  skytex[4] = TextureIO.newTexture(new File("textures/sky/skytop.jpg"), false);
-	  hi_res_sky[0] = TextureIO.newTexture(new File("textures/sky/hirestest1.jpg"), false);
+	  textures[0] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/ferrari.png"), false, "png");
+	  skytex[0] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/sky/skyfront.jpg"), false, "jpg");
+	  skytex[1] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/sky/skyleft.jpg"), false, "jpg");
+	  skytex[2] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/sky/skyback.jpg"), false, "jpg");
+	  skytex[3] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/sky/skyright.jpg"), false, "jpg");
+	  skytex[4] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/sky/skytop.jpg"), false, "jpg");
+	  hi_res_sky[0] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/sky/hirestest1.jpg"), false, "jpg");
 	  
-	  tracktiles[0] = TextureIO.newTexture(new File("textures/track/track.jpg"), false);
+	  tracktiles[0] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/track.jpg"), false, "jpg");
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
@@ -177,23 +152,6 @@ public class GLGraphics implements GLEventListener{
 	  gl.glEndList();
   }
   
-  private void loadDisplayLists(GL2 gl) {
-	  listsToDraw = gl.glGenLists(1);
-	  
-	  gl.glNewList(listsToDraw, GL2.GL_COMPILE);
-	  
-		gl.glBegin(GL.GL_TRIANGLES);
-		  gl.glColor3f(1.0f, 0.0f, 0.0f);
-		  gl.glVertex3f(-1.0f, 0.0f, 0.0f);
-		  gl.glColor3f(0.0f, 1.0f, 0.0f);
-		  gl.glVertex3f(0.0f, 2.0f, 0.0f);
-		  gl.glColor3f(.0f, 0.0f, 1.0f);
-		  gl.glVertex3f(1.0f, 0.0f, 0.0f);
-		gl.glEnd();
-		
-	  gl.glEndList();
-  }
-  
   public void loadTrack(GL2 gl) {
 	  
   }
@@ -224,19 +182,20 @@ public class GLGraphics implements GLEventListener{
 	  
 	  gl.glMatrixMode(GL2.GL_MODELVIEW);
 	  gl.glLoadIdentity();
-	  glu.gluLookAt(distance * Math.sin(Math.toRadians(camera_rotate)), distance * 0.577f, distance * Math.cos(Math.toRadians(camera_rotate)), 0, 0, 0, 0, 1, 0);
+	  glu.gluLookAt(0.0f, distance * 0.577f, distance, 0, 0, 0, 0, 1, 0);
   }
   
   public void display(GLAutoDrawable drawable) {
 	GL2 gl = drawable.getGL().getGL2();
 	gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 	gl.glLoadIdentity();
-	setCamera(drawable, gl, glu, camera_zoom);
+	setCamera(drawable, gl, glu, 10);
 	
 	drawSky(gl);
 	
 	gl.glEnable(GL2.GL_TEXTURE_2D);
 	textures[0].bind();
+	Car.getPlayerCar(0).draw(gl);
 	Car.getPlayerCar(1).draw(gl);
 	
 	tracktiles[0].bind();
@@ -259,9 +218,6 @@ public class GLGraphics implements GLEventListener{
 	
 	gl.glDisable(GL2.GL_TEXTURE_2D);
 	
-	gl.glColor3f(1.0f, 0.0f, 0.0f);
-	printText("Zomg text!");
-	
 	for (UIObject ui : overlays) {
 		ui.update();
 	}
@@ -277,12 +233,11 @@ public class GLGraphics implements GLEventListener{
 	animator = new FPSAnimator(drawable, 60);
 	glu = new GLU();
     
-	loadDisplayLists(gl);
 	loadTextures(gl);
 	loadSky(gl);
 	loadModels(gl);
 	
-	renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);
+	//renderer = new TextRenderer(new Font("Times New Roman", Font.TRUETYPE_FONT, 60), true, true);
 	
 	gl.glEnable(GL2.GL_DEPTH_TEST);
 	gl.glDepthFunc(GL2.GL_LEQUAL);
@@ -303,7 +258,6 @@ public class GLGraphics implements GLEventListener{
 	animator.start();
 	
 	UIObject.initUIObjects(drawable, framewidth, frameheight);
-	//overlays.add(new LapTimer());
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
