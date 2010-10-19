@@ -7,6 +7,8 @@ import java.util.TimerTask;
 
 import javax.media.opengl.GL2;
 
+import com.jogamp.opengl.util.texture.Texture;
+
 public class Car extends TimerTask {
 
   //*******************************
@@ -127,6 +129,7 @@ public class Car extends TimerTask {
 	  zpos += zvel * frequency;
 	  facingvel += turnacc * frequency;
 	  facing += facingvel * frequency;
+	  //System.out.println(zvel);
   }
   
   public void keyPress(int direction) {
@@ -134,13 +137,17 @@ public class Car extends TimerTask {
 	  	case 1:
 	  		setXAccel(baseacc * Math.cos(Math.toRadians(facing)));
         	setZAccel(baseacc * Math.sin(Math.toRadians(facing)));
+        	break;
 	  	case 2:
 	  		setXAccel(-baseacc * Math.cos(Math.toRadians(facing)));
         	setZAccel(-baseacc * Math.sin(Math.toRadians(facing)));
+        	break;
 	  	case 3:
 	  		turn(1);
+	  		break;
 	  	case 4:
 	  		turn(-1);
+	  		break;
 	  }
   }
   
@@ -149,13 +156,17 @@ public class Car extends TimerTask {
 	  	case 1:
 	  		setXAccel(0);
         	setZAccel(0);
+        	break;
 	  	case 2:
 	  		setXAccel(0);
         	setZAccel(0);
+        	break;
 	  	case 3:
 	  		turn(0);
+	  		break;
 	  	case 4:
 	  		turn(0);
+	  		break;
 	  }
   }
   
@@ -176,15 +187,15 @@ public class Car extends TimerTask {
 	  gl.glRotatef(90 - (float) facing, 0.0f, 1.0f, 0.0f);
 	  gl.glTranslatef(-(float)xpos, -(float)ypos, -(float)zpos);
 	  gl.glPushMatrix();
-	  gl.glScalef(0.4f, 0.4f, 0.4f);
-	  gl.glTranslatef((float)xpos / 0.4f, (float)ypos / 0.4f, (float)zpos / 0.4f);
+	  gl.glScalef(0.2f, 0.2f, 0.2f);
+	  gl.glTranslatef((float)xpos / 0.2f, (float)ypos / 0.2f, (float)zpos / 0.2f);
 	  gl.glRotatef(90 + (float) facing, 0.0f, 1.0f, 0.0f);
 	  model.draw(gl);
 	  gl.glPopMatrix();
   }
   
-  public static void modelInit(GL2 gl) {
-	  model.buildList(gl);
+  public static void modelInit(GL2 gl, Texture[] textures) {
+	  model.buildList(gl, textures);
   }
   
   //********************************

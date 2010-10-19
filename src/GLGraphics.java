@@ -15,24 +15,27 @@ public class GLGraphics implements GLEventListener{
   private GLCanvas canvas;
   private FPSAnimator animator;
   private Texture[] textures = new Texture[1];
-  private TextureCoords tc;
   
   private int framewidth = 0;
   private int frameheight = 0;
   
-  private Texture[] tracktiles = new Texture[10];
+  private Texture[] tracktiles = new Texture[9];
   
   private Texture[] skytex = new Texture[5];
   private Texture[] hi_res_sky = new Texture[1];
   private int sky;
   
-  static ArrayList<UIObject> overlays = new ArrayList<UIObject>();
+  private Track currentTrack = null;
+  private boolean trackLoaded = false;
+
+  public Car car1 = null;
+  public Car car2 = null;
   
-  //float camera_zoom = 10;
-  //float camera_rotate = 0;
+  ArrayList<UIObject> overlays = new ArrayList<UIObject>();
+  
   
   public GLGraphics() {
-	  Dimension d = new Dimension(1024, 768);//Toolkit.getDefaultToolkit().getScreenSize();
+	  Dimension d = new Dimension(1024, 768);
 	  frame = new JFrame("Car Racing");
 	  //Specify initial canvas options
 	  capabilities = new GLCapabilities(GLProfile.getDefault());
@@ -70,14 +73,22 @@ public class GLGraphics implements GLEventListener{
 	  skytex[4] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/sky/skytop.jpg"), false, "jpg");
 	  hi_res_sky[0] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/sky/hirestest1.jpg"), false, "jpg");
 	  
-	  tracktiles[0] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/track.jpg"), false, "jpg");
+	  tracktiles[0] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/grass.jpg"), false, "jpg");
+	  tracktiles[1] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/track.jpg"), false, "jpg");
+	  tracktiles[2] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/straightedge.jpg"), false, "jpg");
+	  tracktiles[3] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/bigcurvededge.jpg"), false, "jpg");
+	  tracktiles[4] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/smallcurvededge.jpg"), false, "jpg");
+	  tracktiles[5] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/finish.jpg"), false, "jpg");
+	  tracktiles[6] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/finishedge.jpg"), false, "jpg");
+	  tracktiles[7] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/finishedge.jpg"), false, "jpg");
+	  tracktiles[8] = TextureIO.newTexture(GLGraphics.class.getClass().getResourceAsStream("/textures/track/finishedge.jpg"), false, "jpg");
 	  } catch (Exception e) {
 		  System.out.println(e);
 	  }
   }
   
   private void loadModels(GL2 gl) {
-	  Car.modelInit(gl);
+	  Car.modelInit(gl, textures);
   }
   
   private void loadSky(GL2 gl) {
@@ -152,26 +163,32 @@ public class GLGraphics implements GLEventListener{
 	  gl.glEndList();
   }
   
-  public void loadTrack(GL2 gl) {
-	  
+  public void loadTrack(String filepath) {
+	  currentTrack = new Track(filepath);
+	  trackLoaded = false;
   }
   
-  public void drawSky(GL2 gl) {
-		gl.glPushMatrix();
-		gl.glLoadIdentity();
+  public void addCars(Car p1, Car p2) {
+	car1 = p1;
+	car2 = p2;
+  }
+  
+  private void drawSky(GL2 gl) {
+	  gl.glPushMatrix();
+	  gl.glLoadIdentity();
 		
-		gl.glPushAttrib(GL2.GL_ENABLE_BIT);
-		gl.glEnable(GL2.GL_TEXTURE_2D);
-	    gl.glDisable(GL2.GL_DEPTH_TEST);
-		gl.glDisable(GL2.GL_LIGHTING);
-		gl.glDisable(GL2.GL_BLEND);
+	  gl.glPushAttrib(GL2.GL_ENABLE_BIT);
+	  gl.glEnable(GL2.GL_TEXTURE_2D);
+	  gl.glDisable(GL2.GL_DEPTH_TEST);
+	  gl.glDisable(GL2.GL_LIGHTING);
+	  gl.glDisable(GL2.GL_BLEND);
 		
-		gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	  gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	
+	  gl.glCallList(sky);
 		
-		gl.glCallList(sky);
-		
-		gl.glPopAttrib();
-		gl.glPopMatrix();
+	  gl.glPopAttrib();
+	  gl.glPopMatrix();
   }
   
   private void setCamera(GLAutoDrawable drawable, GL2 gl, GLU glu, float distance) {
@@ -187,33 +204,28 @@ public class GLGraphics implements GLEventListener{
   
   public void display(GLAutoDrawable drawable) {
 	GL2 gl = drawable.getGL().getGL2();
+	
 	gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 	gl.glLoadIdentity();
+	
 	setCamera(drawable, gl, glu, 10);
+	
+	gl.glEnable(GL2.GL_TEXTURE_2D);
+	
+	if (!trackLoaded && currentTrack != null) {
+		currentTrack.buildList(gl, tracktiles);
+		trackLoaded = true;
+	}
 	
 	drawSky(gl);
 	
-	gl.glEnable(GL2.GL_TEXTURE_2D);
-	textures[0].bind();
-	Car.getPlayerCar(0).draw(gl);
-	Car.getPlayerCar(1).draw(gl);
+	if (car1 != null)
+		car1.draw(gl);
+	if (car2 != null)
+		car2.draw(gl);
 	
-	tracktiles[0].bind();
-	tc = tracktiles[0].getImageTexCoords();
-	
-	for (float x = 5; x > -5; x-=1) {
-		
-		for (float z = 5; z > -5; z-=1) {
-			
-			gl.glBegin(GL2.GL_QUADS);
-			
-			  gl.glTexCoord2f(tc.bottom(), tc.right()); gl.glVertex3f(x, 0.0f, z);
-			  gl.glTexCoord2f(tc.bottom(), tc.left()); gl.glVertex3f(x-1, 0.0f, z);
-			  gl.glTexCoord2f(tc.top(), tc.left()); gl.glVertex3f(x-1, 0.0f, z-1);
-			  gl.glTexCoord2f(tc.top(), tc.right()); gl.glVertex3f(x, 0.0f, z-1);
-			
-			gl.glEnd();
-		}
+	if (currentTrack != null) {
+		currentTrack.draw(gl);
 	}
 	
 	gl.glDisable(GL2.GL_TEXTURE_2D);

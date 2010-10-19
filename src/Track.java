@@ -1,12 +1,19 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL2;
+
+import com.jogamp.opengl.util.texture.Texture;
 
 
 public class Track extends UIObject implements Graphics3DObject{
@@ -23,6 +30,9 @@ public class Track extends UIObject implements Graphics3DObject{
 	
 	private int[][] tiledata = new int[21][21];
 	private int[][] rotdata = new int[21][21];
+	private float startx = 0;
+	private float starty = 0;
+	private float startrot = 0;
 	private int selected = -1;
 	private int rotation = 0;
 	private boolean erase = false;
@@ -64,7 +74,52 @@ public class Track extends UIObject implements Graphics3DObject{
 	}
 	
 	public Track(String filepath) {
+		BufferedReader reader;
+		InputStream input;
+		String line;
+		String[] cells;
+		String[] data;
 		
+		int x = 0;
+		int y = 0;
+		int tile = 0;
+		int rot = 0;
+		
+		int startcount = 0;
+		
+		try {
+			 input = Model.class.getClass().getResourceAsStream(filepath);
+			 if (input == null) {
+				 input = new FileInputStream(filepath);
+			 }
+			 reader = new BufferedReader(new InputStreamReader(input));
+			 while (reader.ready()) {
+				 line = reader.readLine();
+				 cells = line.split("\\s+", -1);
+				 
+				 for (x = 0; x <= 20; x++) {
+					 data = cells[x].split(":", -1);
+					 tile = Integer.parseInt(data[0]);
+					 rot = Integer.parseInt(data[1]);
+					 
+					 if (tile == 5 || tile == 6) {
+						 startcount++;
+						 startx += x - 10.5;
+						 starty += y - 10.5;
+						 startrot = rot;
+					 }
+					 
+					 tiledata[x][y] = tile;
+					 rotdata[x][y] = rot;
+				 }
+				 y++;
+			 }
+			 startx /= (float) startcount;
+			 starty /= (float) startcount;
+			 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Track() {
@@ -86,6 +141,7 @@ public class Track extends UIObject implements Graphics3DObject{
 	
 	public void update() {
 		if (show) {
+			AffineTransform transform = graphics.getTransform();
 			graphics.drawImage(background, 0, 0, maxwidth, maxheight, Color.BLACK, null);
 			
 			//Draw the tiles
@@ -95,9 +151,10 @@ public class Track extends UIObject implements Graphics3DObject{
 			
 			for (; y < end; y += CELL_SIZE) {
 				for (x = CELL_SIZE; x < end; x += CELL_SIZE) {
+					graphics.translate(x + CELL_SIZE/2, y + CELL_SIZE/2);
 					graphics.rotate(rotdata[(x/CELL_SIZE) - 1][(y/CELL_SIZE) - 1] * Math.PI/2.0);
-					graphics.drawImage(tiles[tiledata[(x/CELL_SIZE) - 1][(y/CELL_SIZE) - 1]], x, y, CELL_SIZE, CELL_SIZE, Color.BLACK, null);
-					graphics.rotate(rotdata[(x/CELL_SIZE) - 1][(y/CELL_SIZE) - 1] * -Math.PI/2.0);
+					graphics.drawImage(tiles[tiledata[(x/CELL_SIZE) - 1][(y/CELL_SIZE) - 1]], -CELL_SIZE/2, -CELL_SIZE/2, CELL_SIZE, CELL_SIZE, Color.BLACK, null);
+					graphics.setTransform(transform);
 				}
 			}
 			
@@ -127,19 +184,18 @@ public class Track extends UIObject implements Graphics3DObject{
 			
 			//Add the current tile to cursor position
 			if (selected != -1) {
+			  graphics.translate(mousex, mousey);
 			  graphics.rotate(rotation * Math.PI/2.0);
-			  graphics.drawImage(tiles[selected], mousex, mousey, CELL_SIZE, CELL_SIZE, Color.BLACK, null);
-			  graphics.rotate(rotation * -Math.PI/2.0);
+			  graphics.drawImage(tiles[selected], -CELL_SIZE/2, -CELL_SIZE/2, CELL_SIZE, CELL_SIZE, Color.BLACK, null);
+			  graphics.setTransform(transform);
 			}
 		}
 	}
 
 	public void mouseClick(int x, int y) {
-		System.out.println("Clicked X: " + x + " Clicked Y:" + y);
-		
 		if (x >= 808 && x <= 900 && y >= 456 && y <= 480) {
 			//Rotate
-			if (rotation++ >= 4)
+			if (rotation++ >= 3)
 				rotation = 0;
 		} else if (x >= 815 && x <= 893 && y >= 520 && y <= 546) {
 			//Erase
@@ -213,12 +269,21 @@ public class Track extends UIObject implements Graphics3DObject{
 			  selected = 8;
 			else
 			  selected = -1;
+		} else if (x >= CELL_SIZE && x <= (768 - CELL_SIZE) && y >= CELL_SIZE && y <= (768 - CELL_SIZE)) {
+			//Clicked on grid
+			int tilex = (x / CELL_SIZE) - 1;
+			int tiley = (y / CELL_SIZE) - 1;
+			if (selected != -1) {
+				tiledata[tilex][tiley] = selected;
+				rotdata[tilex][tiley] = rotation;
+			} else if (erase) {
+				tiledata[tilex][tiley] = 0;
+				rotdata[tilex][tiley] = 0;
+			}
 		}
-		
 	}
 	
 	public void mouseMove(int x, int y) {
-		System.out.println("Moved X: " + x + " Moved Y:" + y);
 		mousex = x;
 		mousey = y;
 	}
@@ -230,15 +295,49 @@ public class Track extends UIObject implements Graphics3DObject{
 	public boolean isShowing() {
 		return show;
 	}
-	public void buildList(GL2 gl) {
+	public void buildList(GL2 gl, Texture[] textures) {
+		displayList = gl.glGenLists(1);
 		
+		gl.glNewList(displayList, GL2.GL_COMPILE);
+		
+			
+			int x = 0;
+			int y = 0;
+			
+			for (; y <= 20; y++) {
+				for (x = 0; x <= 20; x++) {
+					textures[tiledata[x][y]].bind();
+					
+					gl.glPushMatrix();
+					gl.glTranslatef(x - 10.5f, 0.0f, y - 10.5f);
+					gl.glRotatef(rotdata[x][y] * -90, 0.0f, 1.0f, 0.0f);
+					gl.glBegin(GL2.GL_QUADS);
+					gl.glNormal3f(0.0f, 1.0f, 0.0f);
+					gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-0.5f, 0.0f, 0.5f);
+					gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-0.5f, 0.0f, -0.5f);
+					gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(0.5f, 0.0f, -0.5f);
+					gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(0.5f, 0.0f, 0.5f);
+					
+					
+					gl.glEnd();
+					gl.glPopMatrix();
+				}
+			}
+			
+			
+		gl.glEndList();
+		System.out.println("Startx: " + startx + " Starty: " + starty + " StartRot: " + startrot);
 	}
-
 	public void draw(GL2 gl) {
-		
+		gl.glTranslatef(-3 * startx, 0.0f, -3 * starty);
+		gl.glRotatef(startrot * 0, 0.0f, 1.0f, 0.0f);
+		gl.glPushMatrix();
+		gl.glScalef(3.0f, 1.0f, 3.0f);
+		gl.glCallList(displayList);
+		gl.glPopMatrix();
 	}
 
 	public void clearList(GL2 gl) {
-		
+		gl.glDeleteLists(displayList, 1);
 	}
 }

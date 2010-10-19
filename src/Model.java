@@ -19,6 +19,8 @@ import java.io.InputStreamReader;
 
 import javax.media.opengl.GL2;
 
+import com.jogamp.opengl.util.texture.Texture;
+
 public class Model implements Graphics3DObject{
 
 	/* Texture coordinate and normal indices to use
@@ -148,14 +150,14 @@ public class Model implements Graphics3DObject{
 		} catch (IOException e) {
 			System.err.println(e);
 		}
-		
 	}
 	
-	public void buildList(GL2 gl) {
+	public void buildList(GL2 gl, Texture[] textures) {
 		displayList = gl.glGenLists(1);
 		
 		gl.glNewList(displayList, GL2.GL_COMPILE);
 		
+		  textures[0].bind();
 		  gl.glBegin(GL2.GL_TRIANGLES);
 		  
 		  for (int i = 0; i < index_count * 3; i++) {

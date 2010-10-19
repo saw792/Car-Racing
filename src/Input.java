@@ -27,11 +27,13 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener {
      * Classes requiring mouse movement events:
      *   Track
      */
+	private GLGraphics context;
 	
 	public Input(GLGraphics window) {
-		window.getCanvas().addKeyListener(this);
-		window.getCanvas().addMouseListener(this);
-		window.getCanvas().addMouseMotionListener(this);
+		context = window;
+		context.getCanvas().addKeyListener(this);
+		context.getCanvas().addMouseListener(this);
+		context.getCanvas().addMouseMotionListener(this);
 	}
 	
 	public void keyTyped(KeyEvent e) {}
@@ -43,33 +45,40 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener {
         
         switch (key) {
         case KeyEvent.VK_UP:
-        	c = Car.getPlayerCar(1);
+        	c = context.car1;
         	direction = 1;
+        	break;
         case KeyEvent.VK_DOWN:
-        	c = Car.getPlayerCar(1);
+        	c = context.car1;
         	direction = 2;
+        	break;
         case KeyEvent.VK_LEFT:
-        	c = Car.getPlayerCar(1);
+        	c = context.car1;
         	direction = 3;
+        	break;
         case KeyEvent.VK_RIGHT:
-        	c = Car.getPlayerCar(1);
+        	c = context.car1;
         	direction = 4;
+        	break;
         case KeyEvent.VK_W:
-        	c = Car.getPlayerCar(2);
+        	c = context.car2;
         	direction = 1;
+        	break;
         case KeyEvent.VK_S:
-        	c = Car.getPlayerCar(2);
+        	c = context.car2;
         	direction = 2;
+        	break;
         case KeyEvent.VK_A:
-        	c = Car.getPlayerCar(2);
+        	c = context.car2;
         	direction = 3;
+        	break;
         case KeyEvent.VK_D:
-        	c = Car.getPlayerCar(2);
+        	c = context.car2;
         	direction = 4;
+        	break;
         }
-        if (c != null)
+        if (c != null) 
           c.keyPress(direction);
-        
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -79,29 +88,37 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener {
 		
 		switch (key) {
         case KeyEvent.VK_UP:
-        	c = Car.getPlayerCar(1);
+        	c = context.car1;
         	direction = 1;
+        	break;
         case KeyEvent.VK_DOWN:
-        	c = Car.getPlayerCar(1);
+        	c = context.car1;
         	direction = 2;
+        	break;
         case KeyEvent.VK_LEFT:
-        	c = Car.getPlayerCar(1);
+        	c = context.car1;
         	direction = 3;
+        	break;
         case KeyEvent.VK_RIGHT:
-        	c = Car.getPlayerCar(1);
+        	c = context.car1;
         	direction = 4;
+        	break;
         case KeyEvent.VK_W:
-        	c = Car.getPlayerCar(2);
+        	c = context.car2;
         	direction = 1;
+        	break;
         case KeyEvent.VK_S:
-        	c = Car.getPlayerCar(2);
+        	c = context.car2;
         	direction = 2;
+        	break;
         case KeyEvent.VK_A:
-        	c = Car.getPlayerCar(2);
+        	c = context.car2;
         	direction = 3;
+        	break;
         case KeyEvent.VK_D:
-        	c = Car.getPlayerCar(2);
+        	c = context.car2;
         	direction = 4;
+        	break;
         }
 		if (c != null)
 			c.keyRelease(direction);

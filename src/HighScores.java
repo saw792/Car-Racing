@@ -26,7 +26,7 @@ public class HighScores extends UIObject {
 	
 	static {
 		try {
-			InputStream high = HighScores.class.getClass().getResourceAsStream("textures/highscore.jpg");
+			InputStream high = HighScores.class.getClass().getResourceAsStream("/textures/highscore.jpg");
 			scores = ImageIO.read(high);
 		} catch (IOException e) {}
 		

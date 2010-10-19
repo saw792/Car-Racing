@@ -13,28 +13,30 @@ public class Game {
 	private Car car1;
 	private Car car2;
 	
-	public Game() {
-		ArrayList<UIObject> ui = GLGraphics.overlays;
-		menu = new MainMenu();
-		ui.add(menu);
-		//menu.show(true);
-		editor = new Track();
-		ui.add(editor);
-		editor.show(true);
+	public Game(GLGraphics context) {
+		ArrayList<UIObject> ui = context.overlays;
 		
-		car1 = new Car(0, -2.0, 0.0, 0.0, 90.0);
-		car2 = new Car(1, 2.0, 0.0, 0.0, 90.0);
+		menu = new MainMenu();
+		timer1 = new LapTimer();
+		timer2 = new LapTimer();
+		scores = new HighScores();
+		editor = new Track();
+		ui.add(menu);
+		ui.add(timer1);
+		ui.add(timer2);
+		ui.add(scores);
+		ui.add(editor);
+		//menu.show(true);
+		
+		context.loadTrack("/tracks/track1.trk");
+		
+		car1 = new Car(0, 0.0, 0.0, 0.0, 90.0);
+		//car2 = new Car(1, 2.0, 0.0, 0.0, 90.0);
+		context.addCars(car1, car2);
 	}
 	
 	public void play() {
-		timer1 = new LapTimer();
-		timer2 = new LapTimer();
-		
-		ui.add(timer1);
-		ui.add(timer2);
-		
-		car1 = new Car(0, -2.0, 0.0, 0.0, 90.0);
-		car2 = new Car(1, 2.0, 0.0, 0.0, 90.0);
+
 	}
 	
 }

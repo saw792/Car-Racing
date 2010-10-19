@@ -47,9 +47,9 @@ public class CarRacing {
 	}
 	
 	public static void main(String[] args) {
-	  Game game = new Game();
-	  GLGraphics context = new GLGraphics();
-	  Input parser = new Input(context);
+		GLGraphics context = new GLGraphics();
+		Game game = new Game(context);
+		Input parser = new Input(context);
 	}
 
 }
