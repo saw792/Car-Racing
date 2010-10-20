@@ -10,8 +10,8 @@ public class CarRacing {
 		
 		String[] winnames = {"gluegen-rt.dll", "jogl_desktop.dll", "jogl_es1.dll", "jogl_es2.dll", 
 				             "jogl_gl2es12.dll", "nativewindow_awt.dll", "newt.dll"};
-		String[] unixnames = {"libgluegen-rt.so", "libjogl_desktop.so", "libnativewindow_awt.so",
-				              "libnativewindow_x11.so", "libnewt.so"};
+		String[] unixnames = {"libgluegen-rt.so", "libjogl_desktop.so", "libjogl_es1.so","libjogl_es2.so", 
+							  "libjogl_gl2es12.so", "libnativewindow_awt.so", "libnativewindow_x11.so", "libnewt.so"};
 		
 		InputStream libstream;
 		FileOutputStream output;
@@ -22,7 +22,7 @@ public class CarRacing {
 				if (!(f = new File(winnames[0])).exists()) {
 					for (String path : winnames) {
 						libstream = CarRacing.class.getResourceAsStream("/nativelibs/" + path);
-						output = new FileOutputStream(path);
+						output = new FileOutputStream("/usr/lib/" + path);
 						int i;
 						while ((i = libstream.read()) != -1) {
 							output.write(i);

@@ -13,7 +13,14 @@ public class Game {
 	private Car car1;
 	private Car car2;
 	
+	private static Game instance;
+	
+	public static Game getGame() {
+		return instance;
+	}
+	
 	public Game(GLGraphics context) {
+		instance = this;
 		ArrayList<UIObject> ui = context.overlays;
 		
 		menu = new MainMenu();
@@ -26,17 +33,21 @@ public class Game {
 		ui.add(timer2);
 		ui.add(scores);
 		ui.add(editor);
-		//menu.show(true);
+		menu.show(true);
 		
 		context.loadTrack("/tracks/track1.trk");
 		
-		car1 = new Car(0, 0.0, 0.0, 0.0, 90.0);
-		//car2 = new Car(1, 2.0, 0.0, 0.0, 90.0);
 		context.addCars(car1, car2);
 	}
 	
 	public void play() {
-
+		menu.show(false);
+		car1 = new Car(0, 0.0, 0.0, 0.0, 90.0);
+		timer1.start();
 	}
 	
+	public void trackedit() {
+		menu.show(false);
+		editor.show(true);
+	}
 }

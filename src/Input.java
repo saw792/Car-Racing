@@ -13,19 +13,16 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener {
     /*
      * Classes requiring key events:
      *   Car
-     *   Track
-     *   MainMenu
+     *   *Track
      *   HighScores
-     *   (PauseMenu)
      *   
      * Classes requiring mouse click events:
-     *   Track
+     *   *Track
      *   MainMenu
      *   HighScores
-     *   (PauseMenu)
      * 
      * Classes requiring mouse movement events:
-     *   Track
+     *   *Track
      */
 	private GLGraphics context;
 	
@@ -127,7 +124,10 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener {
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		Track.getActive().mouseClick(x, y);
+		if (Track.getActive().isShowing())
+			Track.getActive().mouseClick(x, y);
+		if (MainMenu.getMenu().isShowing())
+			MainMenu.getMenu().mouseClick(x, y);
 	}
 
 	public void mousePressed(MouseEvent e) {}
